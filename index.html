@@ -149,7 +149,7 @@ body{font-family:Arial,sans-serif;background:#F3F4F6;color:#1A1A1A;font-size:14p
 <div id="sec-funil" class="sec">
   <div class="legend">
     <strong>Alertas:</strong>
-    <span>⚠️ +3 dias</span><span>⏰ +7 dias</span><span>🚨 +14 dias</span><span>📅 Ação vencida</span>
+    <span>[W] +3 dias</span><span>[T] +7 dias</span><span>[!] +14 dias</span><span>[D] Ação vencida</span>
     <span style="border-left:1px solid #E5E7EB;padding-left:14px"><strong>Prioridade:</strong></span>
     <span>🔴 Alta</span><span>🟡 Média</span><span>🟢 Baixa</span>
   </div>
@@ -314,10 +314,10 @@ function renderFunil(){
       const skip=d.status==='Credenciado'||d.status==='Repescagem';
       let icon='';
       if(!skip){
-        if(dias!==null&&dias>=14)icon='🚨';
-        else if(venc)icon='📅';
-        else if(dias!==null&&dias>=7)icon='⏰';
-        else if(dias!==null&&dias>=3)icon='⚠️';
+        if(dias!==null&&dias>=14)icon='[!]';
+        else if(venc)icon='[D]';
+        else if(dias!==null&&dias>=7)icon='[T]';
+        else if(dias!==null&&dias>=3)icon='[W]';
       }
       const nm=d.exec?(d.exec.split(' ')[0]+' '+(d.exec.split(' ')[1]||'')):'';
       const pr=d.prior?d.prior.split(' ')[0]+' ':'';
