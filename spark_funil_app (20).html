@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spark Aligners — Funil de Prospecção</title>
+
+  <meta name="application-name" content="Spark Funil">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Spark Funil">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#1D4E45">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#F3F4F6;color:#1A1A1A;font-size:14px}
+.topbar{background:#1D4E45;color:#fff;padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.logo{background:#1D9E75;padding:5px 12px;border-radius:6px;font-weight:700;font-size:13px}
+.topbar h1{font-size:16px;font-weight:600}
+.sync-indicator{font-size:11px;color:#86EFAC;display:flex;align-items:center;gap:5px}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:#1D9E75}
+.sync-dot.syncing{background:#FCD34D;animation:pulse 1s infinite}
+.sync-dot.error{background:#EF4444}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.tabs-wrap{background:#fff;border-bottom:1px solid #E5E7EB;padding:0 24px;display:flex;gap:4px}
+.tab{padding:12px 18px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;color:#6B7280;border-bottom:2px solid transparent}
+.tab.active{color:#1D4E45;border-bottom-color:#1D9E75}
+.tab:hover:not(.active){color:#374151}
+.content{padding:20px 24px;max-width:1400px;margin:0 auto}
+.section{display:none}.section.active{display:block}
+.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.metric{background:#fff;border-radius:10px;padding:16px;border:1px solid #E5E7EB}
+.metric-label{font-size:11px;color:#6B7280;margin-bottom:6px;font-weight:500}
+.metric-value{font-size:28px;font-weight:700}
+.mv-blue{color:#1E40AF}.mv-amber{color:#92400E}.mv-orange{color:#9A3412}
+.mv-green{color:#14532D}.mv-teal{color:#1D9E75}
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.dash-card{background:#fff;border-radius:10px;padding:16px;border:1px solid #E5E7EB}
+.dash-card-title{font-size:12px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bar-name{font-size:12px;color:#6B7280;min-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;height:12px;background:#F3F4F6;border-radius:20px;overflow:hidden}
+.bar-fill{height:100%;border-radius:20px;transition:width .3s}
+.bar-count{font-size:12px;font-weight:600;min-width:22px;text-align:right}
+.alert-section{background:#fff;border-radius:10px;padding:16px;border:1px solid #E5E7EB;margin-bottom:16px}
+.alert-title{font-size:12px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.alert-dot{width:8px;height:8px;border-radius:50%;background:#EF4444;display:inline-block}
+.parado-card{border-left:3px solid #EF4444;padding:8px 12px;border-radius:0 6px 6px 0;background:#FEF2F2;margin-bottom:6px;cursor:pointer}
+.parado-card:hover{background:#FEE2E2}
+.parado-name{font-weight:600;font-size:13px}
+.parado-sub{font-size:11px;color:#EF4444;margin-top:2px}
+.prox-card{background:#F8FAFC;border:1px solid #E5E7EB;border-radius:6px;padding:8px 12px;margin-bottom:6px;cursor:pointer}
+.prox-card:hover{background:#F0F4F8}
+.prox-name{font-weight:600;font-size:13px}
+.prox-sub{font-size:11px;color:#6B7280;display:flex;justify-content:space-between;margin-top:2px}
+.empty-msg{font-size:12px;color:#9CA3AF;padding:8px 0}
+.kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.kanban-col{background:#F9FAFB;border-radius:10px;border:1px solid #E5E7EB;min-height:200px;overflow:hidden}
+.kanban-header{padding:10px 12px;display:flex;align-items:center;justify-content:space-between}
+.kanban-title{font-size:12px;font-weight:700}
+.kanban-badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px}
+.kanban-body{padding:8px}
+.k-card{background:#fff;border-radius:6px;padding:8px 10px;margin-bottom:6px;cursor:pointer;border:1px solid #E5E7EB;transition:box-shadow .15s}
+.k-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.k-name{font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.k-sub{font-size:11px;color:#9CA3AF;margin-top:2px;display:flex;justify-content:space-between;align-items:center}
+.k-alert{width:7px;height:7px;border-radius:50%;background:#EF4444;display:inline-block;margin-left:4px}
+.k-empty{text-align:center;padding:20px;color:#D1D5DB;font-size:12px}
+.pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.p-abord{background:#FEF9C3;color:#713F12}
+.p-visita{background:#DBEAFE;color:#1E3A5F}
+.p-negoc{background:#FFEDD5;color:#7C2D12}
+.p-cred{background:#DCFCE7;color:#14532D}
+.p-inativo{background:#F3F4F6;color:#374151}
+.list-filters{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.list-filters input,.list-filters select{font-size:12px;padding:7px 10px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;color:#1A1A1A;flex:1;min-width:130px}
+.list-table{background:#fff;border-radius:10px;border:1px solid #E5E7EB;overflow:hidden}
+.list-hdr,.list-row{display:grid;grid-template-columns:2.5fr 1.6fr 1.2fr 1fr 1.2fr .5fr;gap:8px;padding:10px 14px;align-items:center}
+.list-hdr{background:#F9FAFB;font-size:11px;font-weight:600;color:#6B7280;border-bottom:1px solid #E5E7EB}
+.list-row{border-bottom:1px solid #F3F4F6;cursor:pointer;font-size:12px;transition:background .1s}
+.list-row:hover{background:#F8FAFC}
+.list-row:last-child{border-bottom:none}
+.list-name{font-weight:600;font-size:13px}
+.list-clinic{font-size:11px;color:#9CA3AF}
+.list-empty{text-align:center;padding:40px;color:#9CA3AF}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:flex-start;justify-content:center;padding:32px 16px;overflow-y:auto}
+.modal{background:#fff;border-radius:12px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-top{padding:16px 20px;border-bottom:1px solid #E5E7EB;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:1}
+.modal-title{font-size:15px;font-weight:700}
+.modal-body{padding:20px}
+.status-tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:16px}
+.stab{padding:6px 4px;font-size:10px;font-weight:600;border-radius:6px;cursor:pointer;text-align:center;border:1.5px solid transparent;opacity:.5;transition:all .15s}
+.stab.active{opacity:1;border-color:currentColor}
+.stab-abord{color:#92400E;background:#FEF9C3}
+.stab-visita{color:#1E3A5F;background:#DBEAFE}
+.stab-negoc{color:#7C2D12;background:#FFEDD5}
+.stab-cred{color:#14532D;background:#DCFCE7}
+.stab-inativo{color:#374151;background:#F3F4F6}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg.full{grid-column:1/-1}
+.fg label{font-size:11px;font-weight:600;color:#6B7280}
+.fg input,.fg select,.fg textarea{font-size:13px;padding:8px 10px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;color:#1A1A1A;width:100%}
+.fg textarea{resize:vertical;min-height:56px}
+.tries{display:flex;gap:6px;margin-bottom:4px}
+.try{flex:1;padding:7px;font-size:11px;font-weight:600;border-radius:6px;cursor:pointer;border:1px solid #E5E7EB;background:#F9FAFB;color:#6B7280;text-align:center;transition:all .15s}
+.try.active{background:#1E3A5F;color:#fff;border-color:#1E3A5F}
+.section-divider{font-size:10px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin:14px 0 10px;padding-bottom:4px;border-bottom:1px solid #F3F4F6}
+.conv-steps{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.conv-step{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;border:1px solid #E5E7EB;cursor:pointer;font-size:12px;transition:all .15s}
+.conv-step.done{background:#DCFCE7;border-color:#86EFAC;color:#14532D}
+.conv-step.current{background:#DBEAFE;border-color:#93C5FD;color:#1E3A5F;font-weight:600}
+.conv-step i{font-size:16px}
+.modal-footer{padding:14px 20px;border-top:1px solid #E5E7EB;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;background:#fff}
+.btn{padding:8px 16px;font-size:13px;font-weight:600;border-radius:6px;cursor:pointer;border:1px solid #E5E7EB;background:#fff;color:#1A1A1A;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
+.btn:hover{background:#F3F4F6}
+.btn-primary{background:#1D9E75;color:#fff;border-color:#1D9E75}
+.btn-primary:hover{background:#0F6E56}
+.btn-danger{color:#EF4444;border-color:#FECACA}
+.btn-danger:hover{background:#FEF2F2}
+.btn-icon{padding:6px 8px}
+.loading{text-align:center;padding:40px;color:#9CA3AF;font-size:13px}
+.msg-card{margin-bottom:20px;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.msg-header{padding:10px 16px;font-weight:600;font-size:13px}
+.msg-body{padding:14px 16px;border:1px solid #E5E7EB;border-top:none;background:#fff}
+@media(max-width:900px){
+  .metrics{grid-template-columns:repeat(3,1fr)}
+  .dash-grid{grid-template-columns:1fr}
+  .kanban{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .kanban{grid-template-columns:1fr 1fr}
+  .form-grid{grid-template-columns:1fr}
+  .fg.full{grid-column:1}
+  .content{padding:12px}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="logo" style="background:transparent;padding:0"><img src="data:image/png;base64,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" style="height:30px;vertical-align:middle" alt="Spark"></span>
+    <h1>Funil de Prospecção</h1>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="sync-indicator">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span id="sync-label">Conectando...</span>
+    </div>
+    <button class="btn" onclick="exportCSV()" style="font-size:12px;padding:6px 14px;color:#86EFAC;border-color:#2D6B5A;background:transparent">
+      <i class="ti ti-download"></i> Exportar
+    </button>
+    <button class="btn btn-primary" onclick="openNew()" style="font-size:12px;padding:6px 14px">
+      <i class="ti ti-plus"></i> Novo Dr.
+    </button>
+  </div>
+</div>
+
+<div class="tabs-wrap">
+  <button class="tab active" onclick="setTab('dashboard',this)"><i class="ti ti-chart-bar"></i> Dashboard</button>
+  <button class="tab" onclick="setTab('funil',this)"><i class="ti ti-layout-columns"></i> Funil</button>
+  <button class="tab" onclick="setTab('lista',this)"><i class="ti ti-list"></i> Lista</button>
+  <button class="tab" onclick="setTab('mensagens',this)"><i class="ti ti-message-circle"></i> Mensagens</button>
+</div>
+
+<div class="content">
+
+<div id="sec-dashboard" class="section active">
+  <div class="metrics" id="met"></div>
+  <div class="dash-grid">
+    <div class="dash-card">
+      <div class="dash-card-title">Por executivo</div>
+      <div id="ch-exec"></div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-card-title">Taxa de conversão</div>
+      <div id="ch-conv"></div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="alert-section">
+      <div class="alert-title"><span class="alert-dot"></span> Parados há mais de 7 dias</div>
+      <div id="parados"></div>
+    </div>
+    <div class="alert-section">
+      <div class="alert-title"><i class="ti ti-calendar" style="font-size:14px"></i> Próximas ações</div>
+      <div id="prox"></div>
+    </div>
+  </div>
+</div>
+
+<div id="sec-funil" class="section">
+  <div style="display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap;background:#fff;border:1px solid #E5E7EB;border-radius:8px;padding:10px 16px;font-size:11px;color:#6B7280">
+    <span><strong>Alertas no card:</strong></span>
+    <span>⚠️ +3 dias sem ação</span>
+    <span>⏰ +7 dias sem ação</span>
+    <span>🚨 +14 dias sem ação</span>
+    <span>📅 Próxima ação vencida</span>
+    <span style="border-left:1px solid #E5E7EB;padding-left:16px"><strong>Prioridade:</strong></span>
+    <span>🔴 Alta &nbsp; 🟡 Média &nbsp; 🟢 Baixa</span>
+  </div>
+  <div class="kanban" id="kanban"></div>
+</div>
+
+<div id="sec-lista" class="section">
+  <div class="list-filters">
+    <input type="text" id="busca" placeholder="🔍  Buscar por nome ou clínica..." oninput="renderLista()">
+    <select id="f-exec" onchange="renderLista()"><option value="">Todos executivos</option></select>
+    <select id="f-status" onchange="renderLista()">
+      <option value="">Todos status</option>
+      <option>Em Abordagem</option><option>Visita Agendada</option>
+      <option>Em Negociação</option><option>Credenciado</option><option>Repescagem</option>
+    </select>
+  </div>
+  <div class="list-table">
+    <div class="list-hdr">
+      <span>Doutor(a)</span><span>Executivo</span><span>Status</span>
+      <span>Tentativas</span><span>Próx. ação</span><span></span>
+    </div>
+    <div id="lista-body"></div>
+  </div>
+
+<div id="sec-mensagens" class="section">
+  <div style="max-width:680px">
+    <p style="font-size:13px;color:#6B7280;margin-bottom:20px">Mensagens prontas para cada tentativa. Clique em <strong>Copiar</strong> para usar no WhatsApp.</p>
+
+    <div class="msg-card" style="margin-bottom:16px;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)">
+      <div style="background:#DBEAFE;color:#1E3A5F;padding:12px 18px;font-weight:700;font-size:13px">🔵  1ª Tentativa — Primeiro contato</div>
+      <div style="padding:16px 18px;border:1px solid #E5E7EB;border-top:none;border-radius:0 0 10px 10px;background:#fff">
+        <div id="msg1" style="background:#F8FAFC;border-radius:8px;padding:14px;font-size:13px;line-height:1.7;color:#374151;white-space:pre-wrap;margin-bottom:10px">Olá Dr(a). [Nome], tudo bem?
+
+Sou [Seu Nome], da Spark Aligners - Ormco. Temos acompanhado o trabalho da sua clínica em [Região] e vemos um posicionamento muito alinhado com o que a Spark acredita em termos de qualidade e previsibilidade clínica.
+
+Gostaria de te apresentar, de forma objetiva, como nossa tecnologia tem sido adotada por profissionais referência e entender se faz sentido para o seu momento.
+
+Podemos agendar um bate-papo rápido? Terça ou quinta funciona melhor pra você?</div>
+        <button onclick="copyMsg('msg1')" style="font-size:12px;padding:7px 16px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:500"><i class="ti ti-copy"></i> Copiar mensagem</button>
+      </div>
+    </div>
+
+    <div class="msg-card" style="margin-bottom:16px;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)">
+      <div style="background:#FFEDD5;color:#7C2D12;padding:12px 18px;font-weight:700;font-size:13px">🟠  2ª Tentativa — Follow-up (48h após 1ª)</div>
+      <div style="padding:16px 18px;border:1px solid #E5E7EB;border-top:none;border-radius:0 0 10px 10px;background:#fff">
+        <div id="msg2" style="background:#F8FAFC;border-radius:8px;padding:14px;font-size:13px;line-height:1.7;color:#374151;white-space:pre-wrap;margin-bottom:10px">Olá, Dr(a). [Nome], tudo bem?
+
+Passando apenas para retomar nossa conversa e saber se podemos agendar um bate-papo rápido para eu te apresentar a Spark - Ormco.
+
+Fico à disposição.</div>
+        <button onclick="copyMsg('msg2')" style="font-size:12px;padding:7px 16px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:500"><i class="ti ti-copy"></i> Copiar mensagem</button>
+      </div>
+    </div>
+
+    <div class="msg-card" style="margin-bottom:16px;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)">
+      <div style="background:#F3F4F6;color:#374151;padding:12px 18px;font-weight:700;font-size:13px">⚫  3ª Tentativa — Última abordagem (48h após 2ª)</div>
+      <div style="padding:16px 18px;border:1px solid #E5E7EB;border-top:none;border-radius:0 0 10px 10px;background:#fff">
+        <div id="msg3" style="background:#F8FAFC;border-radius:8px;padding:14px;font-size:13px;line-height:1.7;color:#374151;white-space:pre-wrap;margin-bottom:10px">Olá, Dr(a). [Nome]!
+
+A Spark - Ormco tem sido adotada por muitos colegas pela previsibilidade clínica e simplicidade do fluxo.
+
+Se agora não for o melhor momento, sem problema algum. Fico à disposição quando fizer sentido.</div>
+        <button onclick="copyMsg('msg3')" style="font-size:12px;padding:7px 16px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:500"><i class="ti ti-copy"></i> Copiar mensagem</button>
+      </div>
+    </div>
+
+    <div style="background:#F0FDF4;border:1px solid #A7F3D0;border-radius:8px;padding:12px 16px;font-size:12px;color:#14532D">
+      💡 <strong>Dica:</strong> Substitua [Nome], [Seu Nome] e [Região] antes de enviar. Após cada tentativa, atualize o campo <strong>Tentativas</strong> no card do doutor.
+    </div>
+  </div>
+</div>
+
+
+</div><!-- /content -->
+
+</div>
+
+</div>
+
+<!-- MODAL -->
+<div id="mwrap" style="display:none" class="modal-bg" onclick="bgClick(event)">
+<div class="modal">
+  <div class="modal-top">
+    <span class="modal-title" id="mtitle">Novo Doutor(a)</span>
+    <button class="btn btn-icon" onclick="closeModal()"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="modal-body" id="mbody"></div>
+  <div class="modal-footer">
+    <button class="btn btn-danger" id="bdel" onclick="delRec()" style="display:none">
+      <i class="ti ti-trash"></i> Excluir
+    </button>
+    <div style="display:flex;gap:8px;margin-left:auto">
+      <button class="btn" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveRec()"><i class="ti ti-check"></i> Salvar</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// ── Supabase config ──────────────────────────────────────────
+const SB_URL = 'https://ngayznexxlwxpotdhmor.supabase.co';
+const SB_KEY = 'sb_publishable_5wUSRf-yyp9M0Adyayo25w_-JNuDOlR';
+const HEADERS = {
+  'Content-Type': 'application/json',
+  'apikey': SB_KEY,
+  'Authorization': 'Bearer ' + SB_KEY,
+  'Prefer': 'return=representation'
+};
+
+async function sbGet() {
+  const cols = 'id,nome,executivo,origem,clinica,wpp,status_funil,tentativas,dt_contato,dt_ult,prox_acao,desc_prox,pacs,multi,mais2,marca,braq,hibrido,conv_step,obs,prior,potencial,marca_braq,fluxo_dig,scanner,created_at';
+  const r = await fetch(`${SB_URL}/rest/v1/prospeccoes?select=${cols}&order=created_at.desc`, { headers: HEADERS });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+async function sbInsert(rec) {
+  const r = await fetch(`${SB_URL}/rest/v1/prospeccoes`, {
+    method: 'POST', headers: HEADERS, body: JSON.stringify(toDb(rec))
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+async function sbUpdate(id, rec) {
+  const r = await fetch(`${SB_URL}/rest/v1/prospeccoes?id=eq.${id}`, {
+    method: 'PATCH', headers: HEADERS, body: JSON.stringify(toDb(rec))
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+async function sbDelete(id) {
+  const r = await fetch(`${SB_URL}/rest/v1/prospeccoes?id=eq.${id}`, {
+    method: 'DELETE', headers: HEADERS
+  });
+  if (!r.ok) throw new Error(await r.text());
+}
+
+function toDb(d) {
+  return {
+    id: d.id,
+    nome: d.nome,
+    executivo: d.exec,
+    origem: d.origem,
+    clinica: d.clinica,
+    wpp: d.wpp,
+    status_funil: d.status,
+    tentativas: d.tentativas,
+    dt_contato: d.dtContato||null,
+    dt_ult: d.dtUlt||null,
+    prox_acao: d.proxAcao||null,
+    desc_prox: d.descProx||null,
+    pacs: d.pacs||null,
+    multi: d.multi||null,
+    mais2: d.mais2||null,
+    marca: d.marca||null,
+    braq: d.braq||null,
+    marca_braq: d.marcaBraq||null,
+    fluxo_dig: d.fluxoDig||null,
+    scanner: d.scanner||null,
+    hibrido: d.hibrido||null,
+    conv_step: d.convStep||null,
+    obs: d.obs||null,
+    prior: d.prior||null,
+    potencial: d.potencial||null
+  };
+}
+function fromDb(r) {
+  return {
+    id: r.id,
+    nome: r.nome,
+    exec: r.executivo,
+    origem: r.origem,
+    clinica: r.clinica,
+    wpp: r.wpp,
+    status: r.status_funil,
+    tentativas: r.tentativas,
+    dtContato: r.dt_contato,
+    dtUlt: r.dt_ult,
+    proxAcao: r.prox_acao,
+    descProx: r.desc_prox,
+    pacs: r.pacs,
+    multi: r.multi,
+    mais2: r.mais2,
+    marca: r.marca,
+    braq: r.braq,
+    marcaBraq: r.marca_braq,
+    fluxoDig: r.fluxo_dig,
+    scanner: r.scanner,
+    hibrido: r.hibrido,
+    convStep: r.conv_step,
+    obs: r.obs,
+    prior: r.prior,
+    potencial: r.potencial
+  };
+}
+
+// ── App state ────────────────────────────────────────────────
+const EXECS = ['Guilherme Batochio','Bruno Scodino','William Galdino','Marcelo Giusti',
+  'Regiane Pagotto','Fabiano Nunes','Cirlene Fortuna','Pedro Nascimento',
+  'Adriana Lemos','Erica Lacerda','Celso Melgaço','Ana Carolina Barbeiro',
+  'Beatriz Miyake','Gisele de Oliveira','João Menezes','Leonardo Nunes'];
+const ORIGENS  = ['Leads Concorrência','Outras','Leads Congressos','Drs inativos Spark','Drs inativos Daimon'];
+const MARCAS   = ['Spark','Align','Angel','Clear','Braquete','Outro'];
+const BRAQ     = ['Sim – finalização','Sim – preço','Não'];
+const HIBRIDO  = ['Sim','Não','Talvez'];
+const CONV_STEPS = ['Link Enviado','Link Pago','Cadastro Realizado',
+  'DTX Liberado','Credenciamento Agendado','Credenciamento Realizado'];
+const STATUS_LIST = ['Em Abordagem','Visita Agendada','Em Negociação','Credenciado','Repescagem'];
+const PILL = {'Em Abordagem':'p-abord','Visita Agendada':'p-visita',
+  'Em Negociação':'p-negoc','Credenciado':'p-cred','Repescagem':'p-inativo'};
+const STAB = {'Em Abordagem':'stab-abord','Visita Agendada':'stab-visita',
+  'Em Negociação':'stab-negoc','Credenciado':'stab-cred','Repescagem':'stab-inativo'};
+const KAN = {
+  'Em Abordagem':  {hdr:'#FEF9C3',tc:'#92400E',bc:'#713F12'},
+  'Visita Agendada':{hdr:'#DBEAFE',tc:'#1E40AF',bc:'#1E3A5F'},
+  'Em Negociação': {hdr:'#FFEDD5',tc:'#9A3412',bc:'#7C2D12'},
+  'Credenciado':   {hdr:'#DCFCE7',tc:'#166534',bc:'#14532D'},
+  'Repescagem':       {hdr:'#F3F4F6',tc:'#4B5563',bc:'#374151'},
+};
+
+let data = [];
+let editId = null;
+let pollInterval = null;
+
+function setSyncStatus(state) {
+  const dot = document.getElementById('sync-dot');
+  const lbl = document.getElementById('sync-label');
+  if (state === 'ok')      { dot.className='sync-dot'; lbl.textContent='Ao vivo'; }
+  if (state === 'syncing') { dot.className='sync-dot syncing'; lbl.textContent='Sincronizando...'; }
+  if (state === 'error')   { dot.className='sync-dot error'; lbl.textContent='Erro de conexão'; }
+}
+
+async function loadData(silent=false) {
+  if (!silent) setSyncStatus('syncing');
+  try {
+    const rows = await sbGet();
+    data = rows.map(fromDb);
+    setSyncStatus('ok');
+    renderAll();
+  } catch(e) {
+    setSyncStatus('error');
+    console.error('loadData error:', e.message || e);
+    // retry once after 5s
+    if (!silent) setTimeout(()=>loadData(true), 5000);
+  }
+}
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function v(id) { const el = document.getElementById(id); return el ? el.value : ''; }
+function today() { return new Date().toISOString().slice(0,10); }
+function daysSince(ds) {
+  if (!ds) return null;
+  return Math.floor((Date.now() - new Date(ds).getTime()) / 86400000);
+}
+
+function renderAll() { renderMetrics(); renderDash(); renderFunil(); renderLista(); }
+
+function renderMetrics() {
+  const t  = data.length;
+  const a  = data.filter(d=>d.status==='Em Abordagem').length;
+  const em = data.filter(d=>d.status==='Visita Agendada'||d.status==='Em Negociação').length;
+  const c  = data.filter(d=>d.status==='Credenciado').length;
+  const tx = t ? Math.round(c/t*100) : 0;
+  document.getElementById('met').innerHTML = `
+    <div class="metric"><div class="metric-label">Total</div><div class="metric-value mv-blue">${t}</div></div>
+    <div class="metric"><div class="metric-label">Abordagem</div><div class="metric-value mv-amber">${a}</div></div>
+    <div class="metric"><div class="metric-label">Em andamento</div><div class="metric-value mv-orange">${em}</div></div>
+    <div class="metric"><div class="metric-label">Credenciados</div><div class="metric-value mv-green">${c}</div></div>
+    <div class="metric"><div class="metric-label">Conversão</div><div class="metric-value mv-teal">${tx}%</div></div>`;
+}
+
+function renderDash() {
+  const byExec = {};
+  EXECS.forEach(e=>byExec[e]=0);
+  data.forEach(d=>{if(d.exec)byExec[d.exec]=(byExec[d.exec]||0)+1;});
+  const ee = Object.entries(byExec).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
+  const maxE = ee.length ? ee[0][1] : 1;
+  document.getElementById('ch-exec').innerHTML = ee.length
+    ? ee.map(([n,c])=>`
+        <div class="bar-row">
+          <div class="bar-name">${n}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${Math.round(c/maxE*100)}%;background:#1D9E75"></div></div>
+          <div class="bar-count">${c}</div>
+        </div>`).join('')
+    : '<div class="empty-msg">Sem dados</div>';
+
+  const total = data.length||1;
+  const convData = [
+    {label:'Em Abordagem',   color:'#D97706',n:data.filter(d=>d.status==='Em Abordagem').length},
+    {label:'Visita Agendada',color:'#2563EB',n:data.filter(d=>d.status==='Visita Agendada').length},
+    {label:'Em Negociação',  color:'#EA580C',n:data.filter(d=>d.status==='Em Negociação').length},
+    {label:'Credenciado',    color:'#16A34A',n:data.filter(d=>d.status==='Credenciado').length},
+  ];
+  document.getElementById('ch-conv').innerHTML = convData.map(s=>`
+    <div class="bar-row">
+      <div class="bar-name">${s.label}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(s.n/total*100)}%;background:${s.color}"></div></div>
+      <div class="bar-count">${s.n}</div>
+    </div>`).join('');
+
+  const parados = data.filter(d=>{
+    if(d.status==='Credenciado'||d.status==='Repescagem') return false;
+    const dias = daysSince(d.dtUlt||d.dtContato);
+    return dias!==null && dias>=7;
+  }).sort((a,b)=>(daysSince(b.dtUlt||b.dtContato)||0)-(daysSince(a.dtUlt||a.dtContato)||0));
+  document.getElementById('parados').innerHTML = parados.length
+    ? parados.map(d=>{
+        const dias = daysSince(d.dtUlt||d.dtContato);
+        return `<div class="parado-card" onclick="openEdit('${d.id}')">
+          <div class="parado-name">${d.nome} <span style="font-weight:400;color:#6B7280">· ${d.exec||''}</span></div>
+          <div class="parado-sub">${dias} dias sem atualização · <span class="pill ${PILL[d.status]}">${d.status}</span></div>
+        </div>`;}).join('')
+    : '<div class="empty-msg">Nenhum doutor parado.</div>';
+
+  const proximas = data
+    .filter(d=>d.proxAcao&&d.status!=='Credenciado'&&d.status!=='Repescagem')
+    .sort((a,b)=>a.proxAcao.localeCompare(b.proxAcao)).slice(0,6);
+  document.getElementById('prox').innerHTML = proximas.length
+    ? proximas.map(d=>`
+        <div class="prox-card" onclick="openEdit('${d.id}')">
+          <div class="prox-name">${d.nome} <span style="font-weight:400;color:#9CA3AF">· ${d.exec||''}</span></div>
+          <div class="prox-sub"><span>${d.descProx||'Ação pendente'}</span><span>${d.proxAcao}</span></div>
+        </div>`).join('')
+    : '<div class="empty-msg">Nenhuma ação agendada.</div>';
+}
+
+function renderFunil() {
+  document.getElementById('kanban').innerHTML = STATUS_LIST.map(st=>{
+    const items = data.filter(d=>d.status===st);
+    const col = KAN[st];
+    return `<div class="kanban-col">
+      <div class="kanban-header" style="background:${col.hdr}">
+        <span class="kanban-title" style="color:${col.tc}">${st}</span>
+        <span class="kanban-badge" style="background:${col.hdr};color:${col.bc}">${items.length}</span>
+      </div>
+      <div class="kanban-body">
+        ${items.length ? items.map(d=>{
+          const diasCard = daysSince(d.dtContato);
+          const vencidaCard = d.proxAcao && d.proxAcao < today();
+          const skipAlert = d.status==='Credenciado'||d.status==='Repescagem';
+          let alertIcon = '';
+          if(!skipAlert){
+            if(diasCard!==null && diasCard>=14) alertIcon='<span style="font-size:11px;margin-left:4px" title="'+diasCard+' dias sem atualização">🚨</span>';
+            else if(vencidaCard) alertIcon='<span style="font-size:11px;margin-left:4px" title="Próxima ação vencida">📅</span>';
+            else if(diasCard!==null && diasCard>=7) alertIcon='<span style="font-size:11px;margin-left:4px" title="'+diasCard+' dias sem atualização">⏰</span>';
+            else if(diasCard!==null && diasCard>=3) alertIcon='<span style="font-size:11px;margin-left:4px" title="'+diasCard+' dias sem atualização">⚠️</span>';
+          }
+          return `<div class="k-card" onclick="openEdit('${d.id}')">
+            <div class="k-name">${d.nome}${alertIcon}</div>
+            <div class="k-sub"><span>${d.exec?(d.exec.split(' ')[0]+' '+(d.exec.split(' ')[1]||'')):''}</span><span>${d.prior?'<span style="font-size:11px">'+(d.prior.split(' ')[0])+'</span>':''} ${d.tentativas||''}</span></div>
+          </div>`;}).join('')
+        : '<div class="k-empty">–</div>'}
+      </div>
+    </div>`;}).join('');
+}
+
+function renderLista() {
+  const busca  = (document.getElementById('busca')?.value||'').toLowerCase();
+  const fExec  = document.getElementById('f-exec')?.value||'';
+  const fSt    = document.getElementById('f-status')?.value||'';
+  const execSel = document.getElementById('f-exec');
+  if(execSel&&execSel.options.length<=1){
+    EXECS.forEach(e=>{const o=document.createElement('option');o.value=e;o.textContent=e;execSel.appendChild(o);});
+  }
+  let filtered = data.filter(d=>{
+    if(busca&&!d.nome?.toLowerCase().includes(busca)&&!d.clinica?.toLowerCase().includes(busca)) return false;
+    if(fExec&&d.exec!==fExec) return false;
+    if(fSt&&d.status!==fSt) return false;
+    return true;
+  }).sort((a,b)=>(b.dtUlt||b.dtContato||'').localeCompare(a.dtUlt||a.dtContato||''));
+  const body = document.getElementById('lista-body');
+  if(!filtered.length){
+    body.innerHTML='<div class="list-empty"><i class="ti ti-search" style="font-size:24px;display:block;margin-bottom:8px"></i>Nenhum resultado</div>';
+    return;
+  }
+  body.innerHTML = filtered.map(d=>`
+    <div class="list-row" onclick="openEdit('${d.id}')">
+      <div><div class="list-name">${d.prior?'<span style="margin-right:4px">'+(d.prior.split(' ')[0])+'</span>':''}${d.nome}</div><div class="list-clinic">${d.clinica||''}</div></div>
+      <div style="font-size:12px">${d.exec||'–'}</div>
+      <div><span class="pill ${PILL[d.status]||'p-inativo'}">${d.status||'–'}</span></div>
+      <div style="font-size:12px;color:#6B7280">${d.tentativas||'–'}</div>
+      <div style="font-size:11px;color:#6B7280">${d.proxAcao||'–'}</div>
+      <div style="color:#D1D5DB"><i class="ti ti-chevron-right"></i></div>
+    </div>`).join('');
+}
+
+function openNew() {
+  editId=null;
+  document.getElementById('mtitle').textContent='Novo Doutor(a)';
+  document.getElementById('bdel').style.display='none';
+  buildForm({status:'Em Abordagem',tentativas:'1ª tentativa'});
+  document.getElementById('mwrap').style.display='flex';
+}
+function openEdit(id) {
+  editId=id;
+  const d=data.find(x=>x.id===id);if(!d)return;
+  document.getElementById('mtitle').textContent=d.nome||'Editar';
+  document.getElementById('bdel').style.display='inline-flex';
+  buildForm(d);
+  document.getElementById('mwrap').style.display='flex';
+}
+function closeModal(){document.getElementById('mwrap').style.display='none';editId=null;}
+function bgClick(e){if(e.target===document.getElementById('mwrap'))closeModal();}
+
+function buildForm(d) {
+  const s=d.status||'Em Abordagem';
+  const showDiag=['Visita Agendada','Em Negociação','Credenciado'].includes(s);
+  const showConv=['Em Negociação','Credenciado'].includes(s);
+  const convIdx=CONV_STEPS.indexOf(d.convStep||'');
+  document.getElementById('mbody').innerHTML=`
+    <div class="status-tabs">
+      ${STATUS_LIST.map(st=>`<div class="stab ${STAB[st]}${st===s?' active':''}" onclick="changeStatus('${st}')">${st.replace('Em Abordagem','Abordagem').replace('Visita Agendada','Visita Ag.').replace('Em Negociação','Negociação')}</div>`).join('')}
+    </div>
+    <input type="hidden" id="f-status" value="${s}">
+    <div class="section-divider">Dados principais</div>
+    <div class="form-grid">
+      <div class="fg full"><label>Nome do Doutor(a) *</label><input id="f-nome" value="${d.nome||''}" placeholder="Dr. João Silva"></div>
+      <div class="fg"><label>Executivo responsável *</label>
+        <select id="fm-exec">${EXECS.map(e=>`<option value="${e}"${d.exec===e?' selected':''}>${e}</option>`).join('')}</select>
+      </div>
+      <div class="fg"><label>Origem</label>
+        <select id="f-orig">${ORIGENS.map(o=>`<option value="${o}"${d.origem===o?' selected':''}>${o}</option>`).join('')}</select>
+      </div>
+      <div class="fg"><label>Clínica / Consultório</label><input id="f-clinica" value="${d.clinica||''}" placeholder="Clínica Sorriso"></div>
+      <div class="fg"><label>WhatsApp</label><input id="f-wpp" value="${d.wpp||''}" placeholder="(11) 99999-0000"></div>
+    </div>
+    <div class="section-divider">Abordagem</div>
+    <label style="font-size:11px;font-weight:600;color:#6B7280;display:block;margin-bottom:6px">Tentativas de contato</label>
+    <div class="tries">
+      ${['1ª tentativa','2ª tentativa','3ª tentativa'].map(t=>`<div class="try${d.tentativas===t?' active':''}" onclick="setTry('${t}',this)">${t}</div>`).join('')}
+    </div>
+    <input type="hidden" id="f-tries" value="${d.tentativas||'1ª tentativa'}">
+    <div class="form-grid" style="margin-top:10px">
+      <div class="fg"><label>Data 1º contato</label><input type="date" id="f-dtc" value="${d.dtContato||''}"></div>
+      <div class="fg"><label>Próxima ação — data</label><input type="date" id="f-prox" value="${d.proxAcao||''}"></div>
+      <div class="fg"><label>O que fazer</label><input id="f-descprox" value="${d.descProx||''}" placeholder="Ex: Ligar para confirmar visita"></div>
+    </div>
+    ${showDiag?`
+    <div class="section-divider" style="color:#92400E;border-color:#FDE68A">Diagnóstico clínico (1ª visita)</div>
+    <div class="form-grid">
+      <div class="fg"><label>Pacientes orto/mês</label><input id="f-pacs" value="${d.pacs||''}" placeholder="Ex: 20"></div>
+      <div class="fg"><label>Clínica multidisciplinar?</label>
+        <select id="f-multi"><option value="">–</option><option${d.multi==='Sim'?' selected':''}>Sim</option><option${d.multi==='Não'?' selected':''}>Não</option></select>
+      </div>
+      <div class="fg"><label>+2 alinhadores?</label>
+        <select id="f-mais2"><option value="">–</option><option${d.mais2==='Sim'?' selected':''}>Sim</option><option${d.mais2==='Não'?' selected':''}>Não</option></select>
+      </div>
+      <div class="fg"><label>Marca de eleição</label>
+        <select id="f-marca"><option value="">–</option>${MARCAS.map(m=>`<option value="${m}"${d.marca===m?' selected':''}>${m}</option>`).join('')}</select>
+      </div>
+      <div class="fg"><label>Usa braquetes?</label>
+        <select id="f-braq"><option value="">–</option>${BRAQ.map(b=>`<option value="${b}"${d.braq===b?' selected':''}>${b}</option>`).join('')}</select>
+      </div>
+      <div class="fg"><label>Qual marca de braquetes?</label>
+        <input id="f-marcabraq" value="${d.marcaBraq||''}" placeholder="Ex: 3M, Morelli, Abzil...">
+      </div>
+      <div class="fg"><label>Está no fluxo digital?</label>
+        <select id="f-fluxodig"><option value="">–</option><option value="Sim"${d.fluxoDig==='Sim'?' selected':''}>Sim</option><option value="Não"${d.fluxoDig==='Não'?' selected':''}>Não</option></select>
+      </div>
+      <div class="fg"><label>Satisfeito com scanner?</label>
+        <select id="f-scanner"><option value="">–</option><option value="Sim"${d.scanner==='Sim'?' selected':''}>Sim</option><option value="Não"${d.scanner==='Não'?' selected':''}>Não</option><option value="Não tem scanner"${d.scanner==='Não tem scanner'?' selected':''}>Não tem scanner</option></select>
+      </div>
+      <div class="fg"><label>Modelo híbrido?</label>
+        <select id="f-hibrido"><option value="">–</option>${HIBRIDO.map(h=>`<option value="${h}"${d.hibrido===h?' selected':''}>${h}</option>`).join('')}</select>
+      </div>
+    </div>`:''}
+    ${showConv?`
+    <div class="section-divider" style="color:#14532D;border-color:#86EFAC">Etapas de credenciamento</div>
+    <div class="conv-steps">
+      ${CONV_STEPS.map((st,i)=>`
+        <div class="conv-step${i<convIdx?' done':i===convIdx?' current':''}" onclick="setConvStep(${i})">
+          <i class="ti ${i<convIdx?'ti-circle-check':i===convIdx?'ti-circle-dot':'ti-circle'}"></i>${st}
+        </div>`).join('')}
+    </div>
+    <input type="hidden" id="f-conv" value="${d.convStep||''}">`:''}
+    <div class="section-divider">Prioridade & Potencial</div>
+    <div class="form-grid">
+      <div class="fg"><label>Prioridade</label>
+        <select id="f-prior">
+          <option value="">– Selecione –</option>
+          <option value="🔴 Alta"${d.prior==='🔴 Alta'?' selected':''}>🔴 Alta</option>
+          <option value="🟡 Média"${d.prior==='🟡 Média'?' selected':''}>🟡 Média</option>
+          <option value="🟢 Baixa"${d.prior==='🟢 Baixa'?' selected':''}>🟢 Baixa</option>
+        </select>
+      </div>
+      <div class="fg"><label>Potencial (casos Spark/mês)</label>
+        <select id="f-pot">
+          <option value="">– Selecione –</option>
+          <option value="Alto (10+)"${d.potencial==='Alto (10+)'?' selected':''}>Alto (10+ casos/mês)</option>
+          <option value="Médio (5-9)"${d.potencial==='Médio (5-9)'?' selected':''}>Médio (5–9 casos/mês)</option>
+          <option value="Baixo (1-4)"${d.potencial==='Baixo (1-4)'?' selected':''}>Baixo (1–4 casos/mês)</option>
+        </select>
+      </div>
+    </div>
+    <div class="section-divider">Observações</div>
+    <div class="fg full"><textarea id="f-obs" placeholder="Anotações livres...">${d.obs||''}</textarea></div>`;
+}
+
+function changeStatus(s){
+  const cur=collectForm(); cur.status=s;
+  document.getElementById('f-status').value=s;
+  buildForm(cur);
+}
+function setTry(t,el){
+  document.querySelectorAll('.try').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  const fi=document.getElementById('f-tries'); if(fi)fi.value=t;
+}
+function setConvStep(i){
+  const fi=document.getElementById('f-conv'); if(fi)fi.value=CONV_STEPS[i];
+  document.querySelectorAll('.conv-step').forEach((el,idx)=>{
+    el.className='conv-step'+(idx<i?' done':idx===i?' current':'');
+    el.querySelector('i').className='ti '+(idx<i?'ti-circle-check':idx===i?'ti-circle-dot':'ti-circle');
+  });
+}
+function collectForm(){
+  return{nome:v('f-nome'),exec:v('fm-exec'),origem:v('f-orig'),clinica:v('f-clinica'),
+    wpp:v('f-wpp'),status:v('f-status'),tentativas:v('f-tries'),
+    dtContato:v('f-dtc'),dtUlt:null,proxAcao:v('f-prox'),descProx:v('f-descprox'),
+    pacs:v('f-pacs'),multi:v('f-multi'),mais2:v('f-mais2'),marca:v('f-marca'),
+    braq:v('f-braq'),marcaBraq:v('f-marcabraq'),fluxoDig:v('f-fluxodig'),scanner:v('f-scanner'),hibrido:v('f-hibrido'),convStep:v('f-conv'),obs:v('f-obs'),prior:v('f-prior'),potencial:v('f-pot')};
+}
+
+async function saveRec(){
+  const nome=v('f-nome').trim();
+  if(!nome){alert('Informe o nome do doutor(a)');return;}
+  setSyncStatus('syncing');
+  const rec={id:editId||uid(),...collectForm()};
+  try{
+    let result;
+    if(editId){ result = await sbUpdate(editId,rec); }
+    else { result = await sbInsert(rec); }
+    if (Array.isArray(result) && result[0]) {
+      const saved = result[0];
+      if (!saved.executivo || !saved.status) {
+        console.warn('Aviso: campos executivo/status vieram vazios do banco', saved);
+      }
+    }
+    closeModal();
+    await loadData(true);
+  }catch(e){setSyncStatus('error');alert('Erro ao salvar: '+e.message);}
+}
+
+async function delRec(){
+  if(!editId||!confirm('Excluir este doutor do funil?'))return;
+  setSyncStatus('syncing');
+  try{
+    await sbDelete(editId);
+    closeModal();
+    await loadData(true);
+  }catch(e){setSyncStatus('error');alert('Erro ao excluir: '+e.message);}
+}
+
+function setTab(tab,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>{s.classList.remove('active');s.style.display='none';});
+  el.classList.add('active');
+  const sec = document.getElementById('sec-'+tab);
+  if(sec){sec.classList.add('active');sec.style.display='block';}
+  if(tab==='lista')renderLista();
+  if(tab==='funil')renderFunil();
+}
+
+// Polling a cada 30s para sincronizar dados em tempo real
+loadData();
+pollInterval = setInterval(()=>loadData(true), 30000);
+
+// Ensure initial tab is visible
+document.querySelectorAll('.section').forEach(s=>s.style.display='none');
+const initSec = document.getElementById('sec-dashboard');
+if(initSec){initSec.style.display='block';}
+
+function exportCSV() {
+  if (!data.length) { alert('Nenhum dado para exportar.'); return; }
+  const cols = [
+    ['nome',       'Nome do Doutor(a)'],
+    ['exec',       'Executivo'],
+    ['clinica',    'Clínica'],
+    ['wpp',        'WhatsApp'],
+    ['origem',     'Origem'],
+    ['status',     'Status'],
+    ['tentativas', 'Tentativas'],
+    ['dtContato',  'Data 1º Contato'],
+
+    ['proxAcao',   'Próxima Ação'],
+    ['descProx',   'O que fazer'],
+    ['pacs',       'Pacs Orto/Mês'],
+    ['multi',      'Multidisciplinar?'],
+    ['mais2',      '+2 Alinhadores?'],
+    ['marca',      'Marca Eleição'],
+    ['braq',       'Braquetes'],
+    ['hibrido',    'Mod. Híbrido?'],
+    ['convStep',   'Status Credenciamento'],
+    ['prior',      'Prioridade'],
+    ['potencial',  'Potencial (casos/mês)'],
+    ['obs',        'Observações'],
+  ];
+  const esc = v => '"' + String(v||'').replace(/"/g,'""') + '"';
+  const header = cols.map(([,lbl]) => esc(lbl)).join(';');
+  const rows = data.map(d => cols.map(([key]) => esc(d[key]||'')).join(';'));
+  const csv = '\uFEFF' + [header, ...rows].join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const date = new Date().toISOString().slice(0,10);
+  a.download = `Spark_Funil_${date}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function copyMsg(id) {
+  const el = document.getElementById(id);
+  if(!el) return;
+  const text = el.innerText || el.textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = el.nextElementSibling;
+    if(btn){ const orig=btn.innerHTML; btn.innerHTML='<i class="ti ti-check"></i> Copiado!'; btn.style.color='#1D9E75'; setTimeout(()=>{btn.innerHTML=orig;btn.style.color='';},2000); }
+  }).catch(()=>{ alert('Selecione o texto manualmente.'); });
+}
+</script>
+
+</div><
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(r => console.log('SW registered'))
+      .catch(e => console.log('SW error:', e));
+  });
+}
+</script>
+</body>
+</html>
