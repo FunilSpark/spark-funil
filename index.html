@@ -3,297 +3,229 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Spark Aligners — Funil de Prospecção</title>
-
-  <meta name="application-name" content="Spark Funil">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Spark Funil">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#1D4E45">
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icon-192.png">
+<title>Spark — Funil de Prospecção</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#F3F4F6;color:#1A1A1A;font-size:14px}
-.topbar{background:#1D4E45;color:#fff;padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar{background:#1D4E45;color:#fff;padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
 .topbar-left{display:flex;align-items:center;gap:12px}
-.logo{background:#1D9E75;padding:5px 12px;border-radius:6px;font-weight:700;font-size:13px}
-.topbar h1{font-size:16px;font-weight:600}
-.sync-indicator{font-size:11px;color:#86EFAC;display:flex;align-items:center;gap:5px}
+.sync{font-size:11px;color:#86EFAC;display:flex;align-items:center;gap:5px}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:#1D9E75}
 .sync-dot.syncing{background:#FCD34D;animation:pulse 1s infinite}
 .sync-dot.error{background:#EF4444}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.tabs-wrap{background:#fff;border-bottom:1px solid #E5E7EB;padding:0 24px;display:flex;gap:4px}
-.tab{padding:12px 18px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;color:#6B7280;border-bottom:2px solid transparent}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.tabs{background:#fff;border-bottom:1px solid #E5E7EB;padding:0 20px;display:flex;gap:2px}
+.tab{padding:12px 16px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;color:#6B7280;border-bottom:2px solid transparent}
 .tab.active{color:#1D4E45;border-bottom-color:#1D9E75}
-.tab:hover:not(.active){color:#374151}
-.content{padding:20px 24px;max-width:1400px;margin:0 auto}
-.section{display:none}.section.active{display:block}
-.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
-.metric{background:#fff;border-radius:10px;padding:16px;border:1px solid #E5E7EB}
-.metric-label{font-size:11px;color:#6B7280;margin-bottom:6px;font-weight:500}
-.metric-value{font-size:28px;font-weight:700}
-.mv-blue{color:#1E40AF}.mv-amber{color:#92400E}.mv-orange{color:#9A3412}
-.mv-green{color:#14532D}.mv-teal{color:#1D9E75}
-.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
-.dash-card{background:#fff;border-radius:10px;padding:16px;border:1px solid #E5E7EB}
-.dash-card-title{font-size:12px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
-.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.bar-name{font-size:12px;color:#6B7280;min-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bar-track{flex:1;height:12px;background:#F3F4F6;border-radius:20px;overflow:hidden}
-.bar-fill{height:100%;border-radius:20px;transition:width .3s}
-.bar-count{font-size:12px;font-weight:600;min-width:22px;text-align:right}
-.alert-section{background:#fff;border-radius:10px;padding:16px;border:1px solid #E5E7EB;margin-bottom:16px}
-.alert-title{font-size:12px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.alert-dot{width:8px;height:8px;border-radius:50%;background:#EF4444;display:inline-block}
-.parado-card{border-left:3px solid #EF4444;padding:8px 12px;border-radius:0 6px 6px 0;background:#FEF2F2;margin-bottom:6px;cursor:pointer}
-.parado-card:hover{background:#FEE2E2}
-.parado-name{font-weight:600;font-size:13px}
-.parado-sub{font-size:11px;color:#EF4444;margin-top:2px}
-.prox-card{background:#F8FAFC;border:1px solid #E5E7EB;border-radius:6px;padding:8px 12px;margin-bottom:6px;cursor:pointer}
-.prox-card:hover{background:#F0F4F8}
-.prox-name{font-weight:600;font-size:13px}
-.prox-sub{font-size:11px;color:#6B7280;display:flex;justify-content:space-between;margin-top:2px}
-.empty-msg{font-size:12px;color:#9CA3AF;padding:8px 0}
-.kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-.kanban-col{background:#F9FAFB;border-radius:10px;border:1px solid #E5E7EB;min-height:200px;overflow:hidden}
-.kanban-header{padding:10px 12px;display:flex;align-items:center;justify-content:space-between}
-.kanban-title{font-size:12px;font-weight:700}
-.kanban-badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px}
-.kanban-body{padding:8px}
-.k-card{background:#fff;border-radius:6px;padding:8px 10px;margin-bottom:6px;cursor:pointer;border:1px solid #E5E7EB;transition:box-shadow .15s}
-.k-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.content{padding:20px;max-width:1400px;margin:0 auto}
+.sec{display:none}.sec.active{display:block}
+/* metrics */
+.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}
+.metric{background:#fff;border-radius:8px;padding:14px;border:1px solid #E5E7EB;text-align:center}
+.metric-label{font-size:11px;color:#6B7280;margin-bottom:4px}
+.metric-value{font-size:26px;font-weight:700}
+.mv-blue{color:#1E40AF}.mv-amber{color:#92400E}.mv-orange{color:#9A3412}.mv-green{color:#14532D}.mv-teal{color:#1D9E75}
+/* dash */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.dash-card{background:#fff;border-radius:8px;padding:14px;border:1px solid #E5E7EB}
+.dash-title{font-size:11px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.bar-name{font-size:12px;color:#6B7280;min-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-track{flex:1;height:11px;background:#F3F4F6;border-radius:20px;overflow:hidden}
+.bar-fill{height:100%;border-radius:20px}
+.bar-cnt{font-size:12px;font-weight:600;min-width:20px;text-align:right}
+.alert-box{background:#fff;border-radius:8px;padding:14px;border:1px solid #E5E7EB;margin-bottom:14px}
+.parado-card{border-left:3px solid #EF4444;padding:7px 10px;border-radius:0 6px 6px 0;background:#FEF2F2;margin-bottom:5px;cursor:pointer}
+.prox-card{background:#F8FAFC;border:1px solid #E5E7EB;border-radius:6px;padding:7px 10px;margin-bottom:5px;cursor:pointer}
+.empty-msg{font-size:12px;color:#9CA3AF;padding:6px 0}
+/* kanban */
+.kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.k-col{background:#F9FAFB;border-radius:8px;border:1px solid #E5E7EB;overflow:hidden}
+.k-hdr{padding:9px 11px;display:flex;align-items:center;justify-content:space-between}
+.k-title{font-size:12px;font-weight:700}
+.k-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px}
+.k-body{padding:7px}
+.k-card{background:#fff;border-radius:6px;padding:7px 9px;margin-bottom:5px;cursor:pointer;border:1px solid #E5E7EB}
+.k-card:hover{box-shadow:0 2px 6px rgba(0,0,0,.08)}
 .k-name{font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.k-sub{font-size:11px;color:#9CA3AF;margin-top:2px;display:flex;justify-content:space-between;align-items:center}
-.k-alert{width:7px;height:7px;border-radius:50%;background:#EF4444;display:inline-block;margin-left:4px}
-.k-empty{text-align:center;padding:20px;color:#D1D5DB;font-size:12px}
-.pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.k-sub{font-size:11px;color:#9CA3AF;margin-top:2px;display:flex;justify-content:space-between}
+.k-empty{text-align:center;padding:16px;color:#D1D5DB;font-size:12px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid #E5E7EB;border-radius:8px;padding:9px 14px;font-size:11px;color:#6B7280;margin-bottom:12px;align-items:center}
+/* lista */
+.filters{display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap}
+.filters input,.filters select{font-size:12px;padding:7px 9px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;flex:1;min-width:120px}
+.list-table{background:#fff;border-radius:8px;border:1px solid #E5E7EB;overflow:hidden}
+.list-hdr,.list-row{display:grid;grid-template-columns:2.5fr 1.6fr 1.2fr 1fr 1.2fr .4fr;gap:6px;padding:9px 13px;align-items:center;font-size:12px}
+.list-hdr{background:#F9FAFB;font-weight:600;color:#6B7280;border-bottom:1px solid #E5E7EB}
+.list-row{border-bottom:1px solid #F3F4F6;cursor:pointer}
+.list-row:hover{background:#F8FAFC}
+.list-name{font-weight:600;font-size:13px}
+.list-clinic{font-size:11px;color:#9CA3AF}
+/* pill */
+.pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px}
 .p-abord{background:#FEF9C3;color:#713F12}
 .p-visita{background:#DBEAFE;color:#1E3A5F}
 .p-negoc{background:#FFEDD5;color:#7C2D12}
 .p-cred{background:#DCFCE7;color:#14532D}
-.p-inativo{background:#F3F4F6;color:#374151}
-.list-filters{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
-.list-filters input,.list-filters select{font-size:12px;padding:7px 10px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;color:#1A1A1A;flex:1;min-width:130px}
-.list-table{background:#fff;border-radius:10px;border:1px solid #E5E7EB;overflow:hidden}
-.list-hdr,.list-row{display:grid;grid-template-columns:2.5fr 1.6fr 1.2fr 1fr 1.2fr .5fr;gap:8px;padding:10px 14px;align-items:center}
-.list-hdr{background:#F9FAFB;font-size:11px;font-weight:600;color:#6B7280;border-bottom:1px solid #E5E7EB}
-.list-row{border-bottom:1px solid #F3F4F6;cursor:pointer;font-size:12px;transition:background .1s}
-.list-row:hover{background:#F8FAFC}
-.list-row:last-child{border-bottom:none}
-.list-name{font-weight:600;font-size:13px}
-.list-clinic{font-size:11px;color:#9CA3AF}
-.list-empty{text-align:center;padding:40px;color:#9CA3AF}
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:flex-start;justify-content:center;padding:32px 16px;overflow-y:auto}
-.modal{background:#fff;border-radius:12px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
-.modal-top{padding:16px 20px;border-bottom:1px solid #E5E7EB;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:1}
+.p-repesc{background:#F3F4F6;color:#374151}
+/* mensagens */
+.msg-card{margin-bottom:16px;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.msg-hdr{padding:12px 18px;font-weight:700;font-size:13px}
+.msg-body{padding:16px 18px;border:1px solid #E5E7EB;border-top:none;background:#fff}
+.msg-text{background:#F8FAFC;border-radius:8px;padding:14px;font-size:13px;line-height:1.7;color:#374151;white-space:pre-wrap;margin-bottom:10px}
+.msg-btn{font-size:12px;padding:7px 16px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:500}
+.msg-btn:hover{background:#F3F4F6}
+.msg-tip{background:#F0FDF4;border:1px solid #A7F3D0;border-radius:8px;padding:12px 16px;font-size:12px;color:#14532D;margin-top:6px}
+/* modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:flex-start;justify-content:center;padding:28px 16px;overflow-y:auto}
+.modal{background:#fff;border-radius:10px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-top{padding:14px 18px;border-bottom:1px solid #E5E7EB;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff}
 .modal-title{font-size:15px;font-weight:700}
-.modal-body{padding:20px}
-.status-tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:16px}
-.stab{padding:6px 4px;font-size:10px;font-weight:600;border-radius:6px;cursor:pointer;text-align:center;border:1.5px solid transparent;opacity:.5;transition:all .15s}
+.modal-body{padding:18px}
+.modal-foot{padding:12px 18px;border-top:1px solid #E5E7EB;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;background:#fff}
+.status-tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-bottom:14px}
+.stab{padding:6px 3px;font-size:10px;font-weight:600;border-radius:6px;cursor:pointer;text-align:center;border:1.5px solid transparent;opacity:.5}
 .stab.active{opacity:1;border-color:currentColor}
-.stab-abord{color:#92400E;background:#FEF9C3}
-.stab-visita{color:#1E3A5F;background:#DBEAFE}
-.stab-negoc{color:#7C2D12;background:#FFEDD5}
-.stab-cred{color:#14532D;background:#DCFCE7}
-.stab-inativo{color:#374151;background:#F3F4F6}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.fg{display:flex;flex-direction:column;gap:4px}
+.stab-a{color:#92400E;background:#FEF9C3}
+.stab-v{color:#1E3A5F;background:#DBEAFE}
+.stab-n{color:#7C2D12;background:#FFEDD5}
+.stab-c{color:#14532D;background:#DCFCE7}
+.stab-r{color:#374151;background:#F3F4F6}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.fg{display:flex;flex-direction:column;gap:3px}
 .fg.full{grid-column:1/-1}
 .fg label{font-size:11px;font-weight:600;color:#6B7280}
-.fg input,.fg select,.fg textarea{font-size:13px;padding:8px 10px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;color:#1A1A1A;width:100%}
-.fg textarea{resize:vertical;min-height:56px}
-.tries{display:flex;gap:6px;margin-bottom:4px}
-.try{flex:1;padding:7px;font-size:11px;font-weight:600;border-radius:6px;cursor:pointer;border:1px solid #E5E7EB;background:#F9FAFB;color:#6B7280;text-align:center;transition:all .15s}
+.fg input,.fg select,.fg textarea{font-size:13px;padding:7px 9px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;width:100%}
+.fg textarea{resize:vertical;min-height:52px}
+.sdiv{font-size:10px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.05em;margin:12px 0 8px;padding-bottom:3px;border-bottom:1px solid #F3F4F6}
+.tries{display:flex;gap:5px;margin-bottom:3px}
+.try{flex:1;padding:7px;font-size:11px;font-weight:600;border-radius:6px;cursor:pointer;border:1px solid #E5E7EB;background:#F9FAFB;color:#6B7280;text-align:center}
 .try.active{background:#1E3A5F;color:#fff;border-color:#1E3A5F}
-.section-divider{font-size:10px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin:14px 0 10px;padding-bottom:4px;border-bottom:1px solid #F3F4F6}
-.conv-steps{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
-.conv-step{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;border:1px solid #E5E7EB;cursor:pointer;font-size:12px;transition:all .15s}
+.conv-step{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:6px;border:1px solid #E5E7EB;cursor:pointer;font-size:12px;margin-bottom:5px}
 .conv-step.done{background:#DCFCE7;border-color:#86EFAC;color:#14532D}
 .conv-step.current{background:#DBEAFE;border-color:#93C5FD;color:#1E3A5F;font-weight:600}
-.conv-step i{font-size:16px}
-.modal-footer{padding:14px 20px;border-top:1px solid #E5E7EB;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;background:#fff}
-.btn{padding:8px 16px;font-size:13px;font-weight:600;border-radius:6px;cursor:pointer;border:1px solid #E5E7EB;background:#fff;color:#1A1A1A;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
+.btn{padding:7px 14px;font-size:13px;font-weight:600;border-radius:6px;cursor:pointer;border:1px solid #E5E7EB;background:#fff;color:#1A1A1A;display:inline-flex;align-items:center;gap:5px}
 .btn:hover{background:#F3F4F6}
 .btn-primary{background:#1D9E75;color:#fff;border-color:#1D9E75}
 .btn-primary:hover{background:#0F6E56}
 .btn-danger{color:#EF4444;border-color:#FECACA}
-.btn-danger:hover{background:#FEF2F2}
-.btn-icon{padding:6px 8px}
-.loading{text-align:center;padding:40px;color:#9CA3AF;font-size:13px}
-.msg-card{margin-bottom:20px;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.msg-header{padding:10px 16px;font-weight:600;font-size:13px}
-.msg-body{padding:14px 16px;border:1px solid #E5E7EB;border-top:none;background:#fff}
-@media(max-width:900px){
-  .metrics{grid-template-columns:repeat(3,1fr)}
-  .dash-grid{grid-template-columns:1fr}
-  .kanban{grid-template-columns:repeat(2,1fr)}
-}
-@media(max-width:600px){
-  .metrics{grid-template-columns:repeat(2,1fr)}
-  .kanban{grid-template-columns:1fr 1fr}
-  .form-grid{grid-template-columns:1fr}
-  .fg.full{grid-column:1}
-  .content{padding:12px}
-}
+.list-empty{text-align:center;padding:32px;color:#9CA3AF}
+@media(max-width:800px){.metrics{grid-template-columns:repeat(3,1fr)}.dash-grid{grid-template-columns:1fr}.kanban{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}.fg.full{grid-column:1}.content{padding:12px}}
 </style>
 </head>
 <body>
-
 <div class="topbar">
   <div class="topbar-left">
-    <span class="logo" style="background:transparent;padding:0"><img src="data:image/png;base64,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" style="height:30px;vertical-align:middle" alt="Spark"></span>
-    <h1>Funil de Prospecção</h1>
+    <img src="data:image/png;base64,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" style="height:36px" alt="Spark">
+    <span style="color:#fff;font-size:15px;font-weight:600">Funil de Prospecção</span>
   </div>
-  <div style="display:flex;align-items:center;gap:12px">
-    <div class="sync-indicator">
-      <div class="sync-dot" id="sync-dot"></div>
-      <span id="sync-label">Conectando...</span>
-    </div>
-    <button class="btn" onclick="exportCSV()" style="font-size:12px;padding:6px 14px;color:#86EFAC;border-color:#2D6B5A;background:transparent">
-      <i class="ti ti-download"></i> Exportar
-    </button>
-    <button class="btn btn-primary" onclick="openNew()" style="font-size:12px;padding:6px 14px">
-      <i class="ti ti-plus"></i> Novo Dr.
-    </button>
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="sync"><div class="sync-dot" id="sdot"></div><span id="slbl">Conectando...</span></div>
+    <button class="btn" onclick="exportCSV()" style="font-size:11px;padding:5px 12px;color:#86EFAC;border-color:#2D6B5A;background:transparent"><i class="ti ti-download"></i> Exportar</button>
+    <button class="btn btn-primary" onclick="openNew()" style="font-size:12px;padding:6px 14px"><i class="ti ti-plus"></i> Novo Dr.</button>
   </div>
 </div>
-
-<div class="tabs-wrap">
+<div class="tabs">
   <button class="tab active" onclick="setTab('dashboard',this)"><i class="ti ti-chart-bar"></i> Dashboard</button>
   <button class="tab" onclick="setTab('funil',this)"><i class="ti ti-layout-columns"></i> Funil</button>
   <button class="tab" onclick="setTab('lista',this)"><i class="ti ti-list"></i> Lista</button>
   <button class="tab" onclick="setTab('mensagens',this)"><i class="ti ti-message-circle"></i> Mensagens</button>
 </div>
-
 <div class="content">
 
-<div id="sec-dashboard" class="section active">
+<div id="sec-dashboard" class="sec active">
   <div class="metrics" id="met"></div>
   <div class="dash-grid">
-    <div class="dash-card">
-      <div class="dash-card-title">Por executivo</div>
-      <div id="ch-exec"></div>
-    </div>
-    <div class="dash-card">
-      <div class="dash-card-title">Taxa de conversão</div>
-      <div id="ch-conv"></div>
-    </div>
+    <div class="dash-card"><div class="dash-title">Por executivo</div><div id="ch-exec"></div></div>
+    <div class="dash-card"><div class="dash-title">Taxa de conversão</div><div id="ch-conv"></div></div>
   </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-    <div class="alert-section">
-      <div class="alert-title"><span class="alert-dot"></span> Parados há mais de 7 dias</div>
-      <div id="parados"></div>
-    </div>
-    <div class="alert-section">
-      <div class="alert-title"><i class="ti ti-calendar" style="font-size:14px"></i> Próximas ações</div>
-      <div id="prox"></div>
-    </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div class="alert-box"><div class="dash-title" style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#EF4444;display:inline-block"></span>Parados há mais de 7 dias</div><div id="parados"></div></div>
+    <div class="alert-box"><div class="dash-title"><i class="ti ti-calendar" style="font-size:13px"></i> Próximas ações</div><div id="prox"></div></div>
   </div>
 </div>
 
-<div id="sec-funil" class="section">
-  <div style="display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap;background:#fff;border:1px solid #E5E7EB;border-radius:8px;padding:10px 16px;font-size:11px;color:#6B7280">
-    <span><strong>Alertas no card:</strong></span>
-    <span>⚠️ +3 dias sem ação</span>
-    <span>⏰ +7 dias sem ação</span>
-    <span>🚨 +14 dias sem ação</span>
-    <span>📅 Próxima ação vencida</span>
-    <span style="border-left:1px solid #E5E7EB;padding-left:16px"><strong>Prioridade:</strong></span>
-    <span>🔴 Alta &nbsp; 🟡 Média &nbsp; 🟢 Baixa</span>
+<div id="sec-funil" class="sec">
+  <div class="legend">
+    <strong>Alertas:</strong>
+    <span>⚠️ +3 dias</span><span>⏰ +7 dias</span><span>🚨 +14 dias</span><span>📅 Ação vencida</span>
+    <span style="border-left:1px solid #E5E7EB;padding-left:14px"><strong>Prioridade:</strong></span>
+    <span>🔴 Alta</span><span>🟡 Média</span><span>🟢 Baixa</span>
   </div>
   <div class="kanban" id="kanban"></div>
 </div>
 
-<div id="sec-lista" class="section">
-  <div class="list-filters">
-    <input type="text" id="busca" placeholder="🔍  Buscar por nome ou clínica..." oninput="renderLista()">
-    <select id="f-exec" onchange="renderLista()"><option value="">Todos executivos</option></select>
-    <select id="f-status" onchange="renderLista()">
+<div id="sec-lista" class="sec">
+  <div class="filters">
+    <input type="text" id="busca" placeholder="🔍 Buscar nome ou clínica..." oninput="renderLista()">
+    <select id="f-exec-fil" onchange="renderLista()"><option value="">Todos executivos</option></select>
+    <select id="f-st-fil" onchange="renderLista()">
       <option value="">Todos status</option>
       <option>Em Abordagem</option><option>Visita Agendada</option>
       <option>Em Negociação</option><option>Credenciado</option><option>Repescagem</option>
     </select>
   </div>
   <div class="list-table">
-    <div class="list-hdr">
-      <span>Doutor(a)</span><span>Executivo</span><span>Status</span>
-      <span>Tentativas</span><span>Próx. ação</span><span></span>
-    </div>
+    <div class="list-hdr"><span>Doutor(a)</span><span>Executivo</span><span>Status</span><span>Tentativas</span><span>Próx. ação</span><span></span></div>
     <div id="lista-body"></div>
   </div>
+</div>
 
-<div id="sec-mensagens" class="section">
+<div id="sec-mensagens" class="sec">
   <div style="max-width:680px">
     <p style="font-size:13px;color:#6B7280;margin-bottom:20px">Mensagens prontas para cada tentativa. Clique em <strong>Copiar</strong> para usar no WhatsApp.</p>
-
-    <div class="msg-card" style="margin-bottom:16px;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)">
-      <div style="background:#DBEAFE;color:#1E3A5F;padding:12px 18px;font-weight:700;font-size:13px">🔵  1ª Tentativa — Primeiro contato</div>
-      <div style="padding:16px 18px;border:1px solid #E5E7EB;border-top:none;border-radius:0 0 10px 10px;background:#fff">
-        <div id="msg1" style="background:#F8FAFC;border-radius:8px;padding:14px;font-size:13px;line-height:1.7;color:#374151;white-space:pre-wrap;margin-bottom:10px">Olá Dr(a). [Nome], tudo bem?
+    <div class="msg-card">
+      <div class="msg-hdr" style="background:#DBEAFE;color:#1E3A5F">🔵  1ª Tentativa — Primeiro contato</div>
+      <div class="msg-body">
+        <div class="msg-text" id="msg1">Olá Dr(a). [Nome], tudo bem?
 
 Sou [Seu Nome], da Spark Aligners - Ormco. Temos acompanhado o trabalho da sua clínica em [Região] e vemos um posicionamento muito alinhado com o que a Spark acredita em termos de qualidade e previsibilidade clínica.
 
 Gostaria de te apresentar, de forma objetiva, como nossa tecnologia tem sido adotada por profissionais referência e entender se faz sentido para o seu momento.
 
 Podemos agendar um bate-papo rápido? Terça ou quinta funciona melhor pra você?</div>
-        <button onclick="copyMsg('msg1')" style="font-size:12px;padding:7px 16px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:500"><i class="ti ti-copy"></i> Copiar mensagem</button>
+        <button class="msg-btn" onclick="copyMsg('msg1')"><i class="ti ti-copy"></i> Copiar mensagem</button>
       </div>
     </div>
-
-    <div class="msg-card" style="margin-bottom:16px;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)">
-      <div style="background:#FFEDD5;color:#7C2D12;padding:12px 18px;font-weight:700;font-size:13px">🟠  2ª Tentativa — Follow-up (48h após 1ª)</div>
-      <div style="padding:16px 18px;border:1px solid #E5E7EB;border-top:none;border-radius:0 0 10px 10px;background:#fff">
-        <div id="msg2" style="background:#F8FAFC;border-radius:8px;padding:14px;font-size:13px;line-height:1.7;color:#374151;white-space:pre-wrap;margin-bottom:10px">Olá, Dr(a). [Nome], tudo bem?
+    <div class="msg-card">
+      <div class="msg-hdr" style="background:#FFEDD5;color:#7C2D12">🟠  2ª Tentativa — Follow-up (48h após 1ª)</div>
+      <div class="msg-body">
+        <div class="msg-text" id="msg2">Olá, Dr(a). [Nome], tudo bem?
 
 Passando apenas para retomar nossa conversa e saber se podemos agendar um bate-papo rápido para eu te apresentar a Spark - Ormco.
 
 Fico à disposição.</div>
-        <button onclick="copyMsg('msg2')" style="font-size:12px;padding:7px 16px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:500"><i class="ti ti-copy"></i> Copiar mensagem</button>
+        <button class="msg-btn" onclick="copyMsg('msg2')"><i class="ti ti-copy"></i> Copiar mensagem</button>
       </div>
     </div>
-
-    <div class="msg-card" style="margin-bottom:16px;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)">
-      <div style="background:#F3F4F6;color:#374151;padding:12px 18px;font-weight:700;font-size:13px">⚫  3ª Tentativa — Última abordagem (48h após 2ª)</div>
-      <div style="padding:16px 18px;border:1px solid #E5E7EB;border-top:none;border-radius:0 0 10px 10px;background:#fff">
-        <div id="msg3" style="background:#F8FAFC;border-radius:8px;padding:14px;font-size:13px;line-height:1.7;color:#374151;white-space:pre-wrap;margin-bottom:10px">Olá, Dr(a). [Nome]!
+    <div class="msg-card">
+      <div class="msg-hdr" style="background:#F3F4F6;color:#374151">⚫  3ª Tentativa — Última abordagem (48h após 2ª)</div>
+      <div class="msg-body">
+        <div class="msg-text" id="msg3">Olá, Dr(a). [Nome]!
 
 A Spark - Ormco tem sido adotada por muitos colegas pela previsibilidade clínica e simplicidade do fluxo.
 
 Se agora não for o melhor momento, sem problema algum. Fico à disposição quando fizer sentido.</div>
-        <button onclick="copyMsg('msg3')" style="font-size:12px;padding:7px 16px;border:1px solid #E5E7EB;border-radius:6px;background:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:500"><i class="ti ti-copy"></i> Copiar mensagem</button>
+        <button class="msg-btn" onclick="copyMsg('msg3')"><i class="ti ti-copy"></i> Copiar mensagem</button>
       </div>
     </div>
-
-    <div style="background:#F0FDF4;border:1px solid #A7F3D0;border-radius:8px;padding:12px 16px;font-size:12px;color:#14532D">
-      💡 <strong>Dica:</strong> Substitua [Nome], [Seu Nome] e [Região] antes de enviar. Após cada tentativa, atualize o campo <strong>Tentativas</strong> no card do doutor.
-    </div>
+    <div class="msg-tip">💡 <strong>Dica:</strong> Substitua [Nome], [Seu Nome] e [Região] antes de enviar. Após cada tentativa, atualize o campo <strong>Tentativas</strong> no card do doutor.</div>
   </div>
 </div>
-
 
 </div><!-- /content -->
 
-</div>
-
-</div>
-
-<!-- MODAL -->
-<div id="mwrap" style="display:none" class="modal-bg" onclick="bgClick(event)">
+<div id="mwrap" style="display:none" class="modal-bg" onclick="if(event.target===this)closeModal()">
 <div class="modal">
   <div class="modal-top">
     <span class="modal-title" id="mtitle">Novo Doutor(a)</span>
-    <button class="btn btn-icon" onclick="closeModal()"><i class="ti ti-x"></i></button>
+    <button class="btn" style="padding:4px 7px" onclick="closeModal()"><i class="ti ti-x"></i></button>
   </div>
   <div class="modal-body" id="mbody"></div>
-  <div class="modal-footer">
-    <button class="btn btn-danger" id="bdel" onclick="delRec()" style="display:none">
-      <i class="ti ti-trash"></i> Excluir
-    </button>
-    <div style="display:flex;gap:8px;margin-left:auto">
+  <div class="modal-foot">
+    <button class="btn btn-danger" id="bdel" onclick="delRec()" style="display:none"><i class="ti ti-trash"></i> Excluir</button>
+    <div style="display:flex;gap:7px;margin-left:auto">
       <button class="btn" onclick="closeModal()">Cancelar</button>
       <button class="btn btn-primary" onclick="saveRec()"><i class="ti ti-check"></i> Salvar</button>
     </div>
@@ -302,538 +234,207 @@ Se agora não for o melhor momento, sem problema algum. Fico à disposição qua
 </div>
 
 <script>
-// ── Supabase config ──────────────────────────────────────────
-const SB_URL = 'https://ngayznexxlwxpotdhmor.supabase.co';
-const SB_KEY = 'sb_publishable_5wUSRf-yyp9M0Adyayo25w_-JNuDOlR';
-const HEADERS = {
-  'Content-Type': 'application/json',
-  'apikey': SB_KEY,
-  'Authorization': 'Bearer ' + SB_KEY,
-  'Prefer': 'return=representation'
-};
+const SB_URL='https://ngayznexxlwxpotdhmor.supabase.co';
+const SB_KEY='sb_publishable_5wUSRf-yyp9M0Adyayo25w_-JNuDOlR';
+const HDR={'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation'};
 
-async function sbGet() {
-  const cols = 'id,nome,executivo,origem,clinica,wpp,status_funil,tentativas,dt_contato,dt_ult,prox_acao,desc_prox,pacs,multi,mais2,marca,braq,hibrido,conv_step,obs,prior,potencial,marca_braq,fluxo_dig,scanner,created_at';
-  const r = await fetch(`${SB_URL}/rest/v1/prospeccoes?select=${cols}&order=created_at.desc`, { headers: HEADERS });
-  if (!r.ok) throw new Error(await r.text());
+const EXECS=['Guilherme Batochio','Bruno Scodino','William Galdino','Marcelo Giusti','Regiane Pagotto','Fabiano Nunes','Cirlene Fortuna','Pedro Nascimento','Adriana Lemos','Erica Lacerda','Celso Melgaço','Ana Carolina Barbeiro','Beatriz Miyake','Gisele de Oliveira','João Menezes','Leonardo Nunes'];
+const ORIGENS=['Leads Concorrência','Outras','Leads Congressos','Drs inativos Spark','Drs inativos Daimon'];
+const MARCAS=['Spark','Align','Angel','Clear','Braquete','Outro'];
+const BRAQ=['Sim – finalização','Sim – preço','Não'];
+const HIBRIDO=['Sim','Não','Talvez'];
+const CONV=['Link Enviado','Link Pago','Cadastro Realizado','DTX Liberado','Credenciamento Agendado','Credenciamento Realizado'];
+const STATUS=['Em Abordagem','Visita Agendada','Em Negociação','Credenciado','Repescagem'];
+const PILL={'Em Abordagem':'p-abord','Visita Agendada':'p-visita','Em Negociação':'p-negoc','Credenciado':'p-cred','Repescagem':'p-repesc'};
+const KAN={'Em Abordagem':{hdr:'#FEF9C3',tc:'#92400E',bc:'#713F12'},'Visita Agendada':{hdr:'#DBEAFE',tc:'#1E40AF',bc:'#1E3A5F'},'Em Negociação':{hdr:'#FFEDD5',tc:'#9A3412',bc:'#7C2D12'},'Credenciado':{hdr:'#DCFCE7',tc:'#166534',bc:'#14532D'},'Repescagem':{hdr:'#F3F4F6',tc:'#4B5563',bc:'#374151'}};
+
+let data=[],editId=null,pollInterval=null;
+
+function setSS(s){const d=document.getElementById('sdot'),l=document.getElementById('slbl');if(s==='ok'){d.className='sync-dot';l.textContent='Ao vivo';}else if(s==='sync'){d.className='sync-dot syncing';l.textContent='Sincronizando...';}else{d.className='sync-dot error';l.textContent='Erro de conexão';}}
+
+async function sbGet(){
+  const cols='id,nome,executivo,origem,clinica,wpp,status_funil,tentativas,dt_contato,prox_acao,desc_prox,pacs,multi,mais2,marca,braq,marca_braq,fluxo_dig,scanner,hibrido,conv_step,obs,prior,potencial,created_at';
+  const r=await fetch(SB_URL+'/rest/v1/prospeccoes?select='+cols+'&order=created_at.desc',{headers:HDR});
+  if(!r.ok)throw new Error(await r.text());
   return r.json();
 }
-async function sbInsert(rec) {
-  const r = await fetch(`${SB_URL}/rest/v1/prospeccoes`, {
-    method: 'POST', headers: HEADERS, body: JSON.stringify(toDb(rec))
-  });
-  if (!r.ok) throw new Error(await r.text());
-  return r.json();
-}
-async function sbUpdate(id, rec) {
-  const r = await fetch(`${SB_URL}/rest/v1/prospeccoes?id=eq.${id}`, {
-    method: 'PATCH', headers: HEADERS, body: JSON.stringify(toDb(rec))
-  });
-  if (!r.ok) throw new Error(await r.text());
-  return r.json();
-}
-async function sbDelete(id) {
-  const r = await fetch(`${SB_URL}/rest/v1/prospeccoes?id=eq.${id}`, {
-    method: 'DELETE', headers: HEADERS
-  });
-  if (!r.ok) throw new Error(await r.text());
+async function sbInsert(rec){const r=await fetch(SB_URL+'/rest/v1/prospeccoes',{method:'POST',headers:HDR,body:JSON.stringify(toDb(rec))});if(!r.ok)throw new Error(await r.text());return r.json();}
+async function sbUpdate(id,rec){const r=await fetch(SB_URL+'/rest/v1/prospeccoes?id=eq.'+id,{method:'PATCH',headers:HDR,body:JSON.stringify(toDb(rec))});if(!r.ok)throw new Error(await r.text());return r.json();}
+async function sbDelete(id){const r=await fetch(SB_URL+'/rest/v1/prospeccoes?id=eq.'+id,{method:'DELETE',headers:HDR});if(!r.ok)throw new Error(await r.text());}
+
+function toDb(d){return{id:d.id,nome:d.nome,executivo:d.exec,origem:d.origem,clinica:d.clinica,wpp:d.wpp,status_funil:d.status,tentativas:d.tentativas,dt_contato:d.dtContato||null,prox_acao:d.proxAcao||null,desc_prox:d.descProx||null,pacs:d.pacs||null,multi:d.multi||null,mais2:d.mais2||null,marca:d.marca||null,braq:d.braq||null,marca_braq:d.marcaBraq||null,fluxo_dig:d.fluxoDig||null,scanner:d.scanner||null,hibrido:d.hibrido||null,conv_step:d.convStep||null,obs:d.obs||null,prior:d.prior||null,potencial:d.potencial||null};}
+function fromDb(r){return{id:r.id,nome:r.nome,exec:r.executivo,origem:r.origem,clinica:r.clinica,wpp:r.wpp,status:r.status_funil,tentativas:r.tentativas,dtContato:r.dt_contato,proxAcao:r.prox_acao,descProx:r.desc_prox,pacs:r.pacs,multi:r.multi,mais2:r.mais2,marca:r.marca,braq:r.braq,marcaBraq:r.marca_braq,fluxoDig:r.fluxo_dig,scanner:r.scanner,hibrido:r.hibrido,convStep:r.conv_step,obs:r.obs,prior:r.prior,potencial:r.potencial};}
+
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function v(id){const el=document.getElementById(id);return el?el.value:'';}
+function today(){return new Date().toISOString().slice(0,10);}
+function daysSince(ds){if(!ds)return null;return Math.floor((Date.now()-new Date(ds).getTime())/86400000);}
+
+async function loadData(silent=false){
+  if(!silent)setSS('sync');
+  try{const rows=await sbGet();data=rows.map(fromDb);setSS('ok');renderAll();}
+  catch(e){setSS('error');console.error(e);if(!silent)setTimeout(()=>loadData(true),5000);}
 }
 
-function toDb(d) {
-  return {
-    id: d.id,
-    nome: d.nome,
-    executivo: d.exec,
-    origem: d.origem,
-    clinica: d.clinica,
-    wpp: d.wpp,
-    status_funil: d.status,
-    tentativas: d.tentativas,
-    dt_contato: d.dtContato||null,
-    dt_ult: d.dtUlt||null,
-    prox_acao: d.proxAcao||null,
-    desc_prox: d.descProx||null,
-    pacs: d.pacs||null,
-    multi: d.multi||null,
-    mais2: d.mais2||null,
-    marca: d.marca||null,
-    braq: d.braq||null,
-    marca_braq: d.marcaBraq||null,
-    fluxo_dig: d.fluxoDig||null,
-    scanner: d.scanner||null,
-    hibrido: d.hibrido||null,
-    conv_step: d.convStep||null,
-    obs: d.obs||null,
-    prior: d.prior||null,
-    potencial: d.potencial||null
-  };
-}
-function fromDb(r) {
-  return {
-    id: r.id,
-    nome: r.nome,
-    exec: r.executivo,
-    origem: r.origem,
-    clinica: r.clinica,
-    wpp: r.wpp,
-    status: r.status_funil,
-    tentativas: r.tentativas,
-    dtContato: r.dt_contato,
-    dtUlt: r.dt_ult,
-    proxAcao: r.prox_acao,
-    descProx: r.desc_prox,
-    pacs: r.pacs,
-    multi: r.multi,
-    mais2: r.mais2,
-    marca: r.marca,
-    braq: r.braq,
-    marcaBraq: r.marca_braq,
-    fluxoDig: r.fluxo_dig,
-    scanner: r.scanner,
-    hibrido: r.hibrido,
-    convStep: r.conv_step,
-    obs: r.obs,
-    prior: r.prior,
-    potencial: r.potencial
-  };
+function renderAll(){renderMet();renderDash();renderFunil();renderLista();}
+
+function renderMet(){
+  const t=data.length,a=data.filter(d=>d.status==='Em Abordagem').length,em=data.filter(d=>d.status==='Visita Agendada'||d.status==='Em Negociação').length,c=data.filter(d=>d.status==='Credenciado').length,tx=t?Math.round(c/t*100):0;
+  document.getElementById('met').innerHTML=`<div class="metric"><div class="metric-label">Total</div><div class="metric-value mv-blue">${t}</div></div><div class="metric"><div class="metric-label">Abordagem</div><div class="metric-value mv-amber">${a}</div></div><div class="metric"><div class="metric-label">Em andamento</div><div class="metric-value mv-orange">${em}</div></div><div class="metric"><div class="metric-label">Credenciados</div><div class="metric-value mv-green">${c}</div></div><div class="metric"><div class="metric-label">Conversão</div><div class="metric-value mv-teal">${tx}%</div></div>`;
 }
 
-// ── App state ────────────────────────────────────────────────
-const EXECS = ['Guilherme Batochio','Bruno Scodino','William Galdino','Marcelo Giusti',
-  'Regiane Pagotto','Fabiano Nunes','Cirlene Fortuna','Pedro Nascimento',
-  'Adriana Lemos','Erica Lacerda','Celso Melgaço','Ana Carolina Barbeiro',
-  'Beatriz Miyake','Gisele de Oliveira','João Menezes','Leonardo Nunes'];
-const ORIGENS  = ['Leads Concorrência','Outras','Leads Congressos','Drs inativos Spark','Drs inativos Daimon'];
-const MARCAS   = ['Spark','Align','Angel','Clear','Braquete','Outro'];
-const BRAQ     = ['Sim – finalização','Sim – preço','Não'];
-const HIBRIDO  = ['Sim','Não','Talvez'];
-const CONV_STEPS = ['Link Enviado','Link Pago','Cadastro Realizado',
-  'DTX Liberado','Credenciamento Agendado','Credenciamento Realizado'];
-const STATUS_LIST = ['Em Abordagem','Visita Agendada','Em Negociação','Credenciado','Repescagem'];
-const PILL = {'Em Abordagem':'p-abord','Visita Agendada':'p-visita',
-  'Em Negociação':'p-negoc','Credenciado':'p-cred','Repescagem':'p-inativo'};
-const STAB = {'Em Abordagem':'stab-abord','Visita Agendada':'stab-visita',
-  'Em Negociação':'stab-negoc','Credenciado':'stab-cred','Repescagem':'stab-inativo'};
-const KAN = {
-  'Em Abordagem':  {hdr:'#FEF9C3',tc:'#92400E',bc:'#713F12'},
-  'Visita Agendada':{hdr:'#DBEAFE',tc:'#1E40AF',bc:'#1E3A5F'},
-  'Em Negociação': {hdr:'#FFEDD5',tc:'#9A3412',bc:'#7C2D12'},
-  'Credenciado':   {hdr:'#DCFCE7',tc:'#166534',bc:'#14532D'},
-  'Repescagem':       {hdr:'#F3F4F6',tc:'#4B5563',bc:'#374151'},
-};
-
-let data = [];
-let editId = null;
-let pollInterval = null;
-
-function setSyncStatus(state) {
-  const dot = document.getElementById('sync-dot');
-  const lbl = document.getElementById('sync-label');
-  if (state === 'ok')      { dot.className='sync-dot'; lbl.textContent='Ao vivo'; }
-  if (state === 'syncing') { dot.className='sync-dot syncing'; lbl.textContent='Sincronizando...'; }
-  if (state === 'error')   { dot.className='sync-dot error'; lbl.textContent='Erro de conexão'; }
+function renderDash(){
+  const byE={};EXECS.forEach(e=>byE[e]=0);data.forEach(d=>{if(d.exec)byE[d.exec]=(byE[d.exec]||0)+1;});
+  const ee=Object.entries(byE).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
+  const mE=ee.length?ee[0][1]:1;
+  document.getElementById('ch-exec').innerHTML=ee.length?ee.map(([n,c])=>`<div class="bar-row"><div class="bar-name">${n}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(c/mE*100)}%;background:#1D9E75"></div></div><div class="bar-cnt">${c}</div></div>`).join(''):'<div class="empty-msg">Sem dados</div>';
+  const tot=data.length||1;
+  const cvD=[{l:'Em Abordagem',c:'#D97706',n:data.filter(d=>d.status==='Em Abordagem').length},{l:'Visita Agendada',c:'#2563EB',n:data.filter(d=>d.status==='Visita Agendada').length},{l:'Em Negociação',c:'#EA580C',n:data.filter(d=>d.status==='Em Negociação').length},{l:'Credenciado',c:'#16A34A',n:data.filter(d=>d.status==='Credenciado').length}];
+  document.getElementById('ch-conv').innerHTML=cvD.map(s=>`<div class="bar-row"><div class="bar-name">${s.l}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(s.n/tot*100)}%;background:${s.c}"></div></div><div class="bar-cnt">${s.n}</div></div>`).join('');
+  const par=data.filter(d=>{if(d.status==='Credenciado'||d.status==='Repescagem')return false;const ds=daysSince(d.dtContato);return ds!==null&&ds>=7;}).sort((a,b)=>(daysSince(b.dtContato)||0)-(daysSince(a.dtContato)||0));
+  document.getElementById('parados').innerHTML=par.length?par.map(d=>`<div class="parado-card" onclick="openEdit('${d.id}')"><div style="font-weight:600;font-size:13px">${d.nome} <span style="font-weight:400;color:#6B7280">· ${d.exec||''}</span></div><div style="font-size:11px;color:#EF4444;margin-top:2px">${daysSince(d.dtContato)} dias · <span class="pill ${PILL[d.status]}">${d.status}</span></div></div>`).join(''):'<div class="empty-msg">Nenhum doutor parado.</div>';
+  const prx=data.filter(d=>d.proxAcao&&d.status!=='Credenciado'&&d.status!=='Repescagem').sort((a,b)=>a.proxAcao.localeCompare(b.proxAcao)).slice(0,6);
+  document.getElementById('prox').innerHTML=prx.length?prx.map(d=>`<div class="prox-card" onclick="openEdit('${d.id}')"><div style="font-weight:600;font-size:13px">${d.nome} <span style="font-weight:400;color:#9CA3AF">· ${d.exec||''}</span></div><div style="font-size:11px;color:#6B7280;display:flex;justify-content:space-between;margin-top:2px"><span>${d.descProx||'Ação pendente'}</span><span>${d.proxAcao}</span></div></div>`).join(''):'<div class="empty-msg">Nenhuma ação agendada.</div>';
 }
 
-async function loadData(silent=false) {
-  if (!silent) setSyncStatus('syncing');
-  try {
-    const rows = await sbGet();
-    data = rows.map(fromDb);
-    setSyncStatus('ok');
-    renderAll();
-  } catch(e) {
-    setSyncStatus('error');
-    console.error('loadData error:', e.message || e);
-    // retry once after 5s
-    if (!silent) setTimeout(()=>loadData(true), 5000);
-  }
+function renderFunil(){
+  document.getElementById('kanban').innerHTML=STATUS.map(st=>{
+    const items=data.filter(d=>d.status===st),col=KAN[st];
+    return `<div class="k-col"><div class="k-hdr" style="background:${col.hdr}"><span class="k-title" style="color:${col.tc}">${st}</span><span class="k-badge" style="background:${col.hdr};color:${col.bc}">${items.length}</span></div><div class="k-body">${items.length?items.map(d=>{
+      const dias=daysSince(d.dtContato),venc=d.proxAcao&&d.proxAcao<today(),skip=d.status==='Credenciado'||d.status==='Repescagem';
+      let icon='';
+      if(!skip){if(dias!==null&&dias>=14)icon='🚨';else if(venc)icon='📅';else if(dias!==null&&dias>=7)icon='⏰';else if(dias!==null&&dias>=3)icon='⚠️';}
+      return `<div class="k-card" onclick="openEdit('${d.id}')"><div class="k-name">${d.nome}${icon?\' <span style="font-size:10px">\'+icon+\'</span>\':''}</div><div class="k-sub"><span>${d.exec?(d.exec.split(' ')[0]+' '+(d.exec.split(' ')[1]||'')):''}</span><span>${d.prior?d.prior.split(' ')[0]+' ':''}${d.tentativas||''}</span></div></div>`;
+    }).join(''):'<div class="k-empty">–</div>'}</div></div>`;
+  }).join('');
 }
 
-function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
-function v(id) { const el = document.getElementById(id); return el ? el.value : ''; }
-function today() { return new Date().toISOString().slice(0,10); }
-function daysSince(ds) {
-  if (!ds) return null;
-  return Math.floor((Date.now() - new Date(ds).getTime()) / 86400000);
-}
-
-function renderAll() { renderMetrics(); renderDash(); renderFunil(); renderLista(); }
-
-function renderMetrics() {
-  const t  = data.length;
-  const a  = data.filter(d=>d.status==='Em Abordagem').length;
-  const em = data.filter(d=>d.status==='Visita Agendada'||d.status==='Em Negociação').length;
-  const c  = data.filter(d=>d.status==='Credenciado').length;
-  const tx = t ? Math.round(c/t*100) : 0;
-  document.getElementById('met').innerHTML = `
-    <div class="metric"><div class="metric-label">Total</div><div class="metric-value mv-blue">${t}</div></div>
-    <div class="metric"><div class="metric-label">Abordagem</div><div class="metric-value mv-amber">${a}</div></div>
-    <div class="metric"><div class="metric-label">Em andamento</div><div class="metric-value mv-orange">${em}</div></div>
-    <div class="metric"><div class="metric-label">Credenciados</div><div class="metric-value mv-green">${c}</div></div>
-    <div class="metric"><div class="metric-label">Conversão</div><div class="metric-value mv-teal">${tx}%</div></div>`;
-}
-
-function renderDash() {
-  const byExec = {};
-  EXECS.forEach(e=>byExec[e]=0);
-  data.forEach(d=>{if(d.exec)byExec[d.exec]=(byExec[d.exec]||0)+1;});
-  const ee = Object.entries(byExec).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
-  const maxE = ee.length ? ee[0][1] : 1;
-  document.getElementById('ch-exec').innerHTML = ee.length
-    ? ee.map(([n,c])=>`
-        <div class="bar-row">
-          <div class="bar-name">${n}</div>
-          <div class="bar-track"><div class="bar-fill" style="width:${Math.round(c/maxE*100)}%;background:#1D9E75"></div></div>
-          <div class="bar-count">${c}</div>
-        </div>`).join('')
-    : '<div class="empty-msg">Sem dados</div>';
-
-  const total = data.length||1;
-  const convData = [
-    {label:'Em Abordagem',   color:'#D97706',n:data.filter(d=>d.status==='Em Abordagem').length},
-    {label:'Visita Agendada',color:'#2563EB',n:data.filter(d=>d.status==='Visita Agendada').length},
-    {label:'Em Negociação',  color:'#EA580C',n:data.filter(d=>d.status==='Em Negociação').length},
-    {label:'Credenciado',    color:'#16A34A',n:data.filter(d=>d.status==='Credenciado').length},
-  ];
-  document.getElementById('ch-conv').innerHTML = convData.map(s=>`
-    <div class="bar-row">
-      <div class="bar-name">${s.label}</div>
-      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(s.n/total*100)}%;background:${s.color}"></div></div>
-      <div class="bar-count">${s.n}</div>
-    </div>`).join('');
-
-  const parados = data.filter(d=>{
-    if(d.status==='Credenciado'||d.status==='Repescagem') return false;
-    const dias = daysSince(d.dtUlt||d.dtContato);
-    return dias!==null && dias>=7;
-  }).sort((a,b)=>(daysSince(b.dtUlt||b.dtContato)||0)-(daysSince(a.dtUlt||a.dtContato)||0));
-  document.getElementById('parados').innerHTML = parados.length
-    ? parados.map(d=>{
-        const dias = daysSince(d.dtUlt||d.dtContato);
-        return `<div class="parado-card" onclick="openEdit('${d.id}')">
-          <div class="parado-name">${d.nome} <span style="font-weight:400;color:#6B7280">· ${d.exec||''}</span></div>
-          <div class="parado-sub">${dias} dias sem atualização · <span class="pill ${PILL[d.status]}">${d.status}</span></div>
-        </div>`;}).join('')
-    : '<div class="empty-msg">Nenhum doutor parado.</div>';
-
-  const proximas = data
-    .filter(d=>d.proxAcao&&d.status!=='Credenciado'&&d.status!=='Repescagem')
-    .sort((a,b)=>a.proxAcao.localeCompare(b.proxAcao)).slice(0,6);
-  document.getElementById('prox').innerHTML = proximas.length
-    ? proximas.map(d=>`
-        <div class="prox-card" onclick="openEdit('${d.id}')">
-          <div class="prox-name">${d.nome} <span style="font-weight:400;color:#9CA3AF">· ${d.exec||''}</span></div>
-          <div class="prox-sub"><span>${d.descProx||'Ação pendente'}</span><span>${d.proxAcao}</span></div>
-        </div>`).join('')
-    : '<div class="empty-msg">Nenhuma ação agendada.</div>';
-}
-
-function renderFunil() {
-  document.getElementById('kanban').innerHTML = STATUS_LIST.map(st=>{
-    const items = data.filter(d=>d.status===st);
-    const col = KAN[st];
-    return `<div class="kanban-col">
-      <div class="kanban-header" style="background:${col.hdr}">
-        <span class="kanban-title" style="color:${col.tc}">${st}</span>
-        <span class="kanban-badge" style="background:${col.hdr};color:${col.bc}">${items.length}</span>
-      </div>
-      <div class="kanban-body">
-        ${items.length ? items.map(d=>{
-          const diasCard = daysSince(d.dtContato);
-          const vencidaCard = d.proxAcao && d.proxAcao < today();
-          const skipAlert = d.status==='Credenciado'||d.status==='Repescagem';
-          let alertIcon = '';
-          if(!skipAlert){
-            if(diasCard!==null && diasCard>=14) alertIcon='<span style="font-size:11px;margin-left:4px" title="'+diasCard+' dias sem atualização">🚨</span>';
-            else if(vencidaCard) alertIcon='<span style="font-size:11px;margin-left:4px" title="Próxima ação vencida">📅</span>';
-            else if(diasCard!==null && diasCard>=7) alertIcon='<span style="font-size:11px;margin-left:4px" title="'+diasCard+' dias sem atualização">⏰</span>';
-            else if(diasCard!==null && diasCard>=3) alertIcon='<span style="font-size:11px;margin-left:4px" title="'+diasCard+' dias sem atualização">⚠️</span>';
-          }
-          return `<div class="k-card" onclick="openEdit('${d.id}')">
-            <div class="k-name">${d.nome}${alertIcon}</div>
-            <div class="k-sub"><span>${d.exec?(d.exec.split(' ')[0]+' '+(d.exec.split(' ')[1]||'')):''}</span><span>${d.prior?'<span style="font-size:11px">'+(d.prior.split(' ')[0])+'</span>':''} ${d.tentativas||''}</span></div>
-          </div>`;}).join('')
-        : '<div class="k-empty">–</div>'}
-      </div>
-    </div>`;}).join('');
-}
-
-function renderLista() {
-  const busca  = (document.getElementById('busca')?.value||'').toLowerCase();
-  const fExec  = document.getElementById('f-exec')?.value||'';
-  const fSt    = document.getElementById('f-status')?.value||'';
-  const execSel = document.getElementById('f-exec');
-  if(execSel&&execSel.options.length<=1){
-    EXECS.forEach(e=>{const o=document.createElement('option');o.value=e;o.textContent=e;execSel.appendChild(o);});
-  }
-  let filtered = data.filter(d=>{
-    if(busca&&!d.nome?.toLowerCase().includes(busca)&&!d.clinica?.toLowerCase().includes(busca)) return false;
-    if(fExec&&d.exec!==fExec) return false;
-    if(fSt&&d.status!==fSt) return false;
+function renderLista(){
+  const busca=(document.getElementById('busca')?.value||'').toLowerCase();
+  const fE=document.getElementById('f-exec-fil')?.value||'';
+  const fS=document.getElementById('f-st-fil')?.value||'';
+  const esel=document.getElementById('f-exec-fil');
+  if(esel&&esel.options.length<=1)EXECS.forEach(e=>{const o=document.createElement('option');o.value=e;o.textContent=e;esel.appendChild(o);});
+  let filtered=data.filter(d=>{
+    if(busca&&!d.nome?.toLowerCase().includes(busca)&&!d.clinica?.toLowerCase().includes(busca))return false;
+    if(fE&&d.exec!==fE)return false;
+    if(fS&&d.status!==fS)return false;
     return true;
-  }).sort((a,b)=>(b.dtUlt||b.dtContato||'').localeCompare(a.dtUlt||a.dtContato||''));
-  const body = document.getElementById('lista-body');
-  if(!filtered.length){
-    body.innerHTML='<div class="list-empty"><i class="ti ti-search" style="font-size:24px;display:block;margin-bottom:8px"></i>Nenhum resultado</div>';
-    return;
-  }
-  body.innerHTML = filtered.map(d=>`
-    <div class="list-row" onclick="openEdit('${d.id}')">
-      <div><div class="list-name">${d.prior?'<span style="margin-right:4px">'+(d.prior.split(' ')[0])+'</span>':''}${d.nome}</div><div class="list-clinic">${d.clinica||''}</div></div>
-      <div style="font-size:12px">${d.exec||'–'}</div>
-      <div><span class="pill ${PILL[d.status]||'p-inativo'}">${d.status||'–'}</span></div>
-      <div style="font-size:12px;color:#6B7280">${d.tentativas||'–'}</div>
-      <div style="font-size:11px;color:#6B7280">${d.proxAcao||'–'}</div>
-      <div style="color:#D1D5DB"><i class="ti ti-chevron-right"></i></div>
-    </div>`).join('');
-}
-
-function openNew() {
-  editId=null;
-  document.getElementById('mtitle').textContent='Novo Doutor(a)';
-  document.getElementById('bdel').style.display='none';
-  buildForm({status:'Em Abordagem',tentativas:'1ª tentativa'});
-  document.getElementById('mwrap').style.display='flex';
-}
-function openEdit(id) {
-  editId=id;
-  const d=data.find(x=>x.id===id);if(!d)return;
-  document.getElementById('mtitle').textContent=d.nome||'Editar';
-  document.getElementById('bdel').style.display='inline-flex';
-  buildForm(d);
-  document.getElementById('mwrap').style.display='flex';
-}
-function closeModal(){document.getElementById('mwrap').style.display='none';editId=null;}
-function bgClick(e){if(e.target===document.getElementById('mwrap'))closeModal();}
-
-function buildForm(d) {
-  const s=d.status||'Em Abordagem';
-  const showDiag=['Visita Agendada','Em Negociação','Credenciado'].includes(s);
-  const showConv=['Em Negociação','Credenciado'].includes(s);
-  const convIdx=CONV_STEPS.indexOf(d.convStep||'');
-  document.getElementById('mbody').innerHTML=`
-    <div class="status-tabs">
-      ${STATUS_LIST.map(st=>`<div class="stab ${STAB[st]}${st===s?' active':''}" onclick="changeStatus('${st}')">${st.replace('Em Abordagem','Abordagem').replace('Visita Agendada','Visita Ag.').replace('Em Negociação','Negociação')}</div>`).join('')}
-    </div>
-    <input type="hidden" id="f-status" value="${s}">
-    <div class="section-divider">Dados principais</div>
-    <div class="form-grid">
-      <div class="fg full"><label>Nome do Doutor(a) *</label><input id="f-nome" value="${d.nome||''}" placeholder="Dr. João Silva"></div>
-      <div class="fg"><label>Executivo responsável *</label>
-        <select id="fm-exec">${EXECS.map(e=>`<option value="${e}"${d.exec===e?' selected':''}>${e}</option>`).join('')}</select>
-      </div>
-      <div class="fg"><label>Origem</label>
-        <select id="f-orig">${ORIGENS.map(o=>`<option value="${o}"${d.origem===o?' selected':''}>${o}</option>`).join('')}</select>
-      </div>
-      <div class="fg"><label>Clínica / Consultório</label><input id="f-clinica" value="${d.clinica||''}" placeholder="Clínica Sorriso"></div>
-      <div class="fg"><label>WhatsApp</label><input id="f-wpp" value="${d.wpp||''}" placeholder="(11) 99999-0000"></div>
-    </div>
-    <div class="section-divider">Abordagem</div>
-    <label style="font-size:11px;font-weight:600;color:#6B7280;display:block;margin-bottom:6px">Tentativas de contato</label>
-    <div class="tries">
-      ${['1ª tentativa','2ª tentativa','3ª tentativa'].map(t=>`<div class="try${d.tentativas===t?' active':''}" onclick="setTry('${t}',this)">${t}</div>`).join('')}
-    </div>
-    <input type="hidden" id="f-tries" value="${d.tentativas||'1ª tentativa'}">
-    <div class="form-grid" style="margin-top:10px">
-      <div class="fg"><label>Data 1º contato</label><input type="date" id="f-dtc" value="${d.dtContato||''}"></div>
-      <div class="fg"><label>Próxima ação — data</label><input type="date" id="f-prox" value="${d.proxAcao||''}"></div>
-      <div class="fg"><label>O que fazer</label><input id="f-descprox" value="${d.descProx||''}" placeholder="Ex: Ligar para confirmar visita"></div>
-    </div>
-    ${showDiag?`
-    <div class="section-divider" style="color:#92400E;border-color:#FDE68A">Diagnóstico clínico (1ª visita)</div>
-    <div class="form-grid">
-      <div class="fg"><label>Pacientes orto/mês</label><input id="f-pacs" value="${d.pacs||''}" placeholder="Ex: 20"></div>
-      <div class="fg"><label>Clínica multidisciplinar?</label>
-        <select id="f-multi"><option value="">–</option><option${d.multi==='Sim'?' selected':''}>Sim</option><option${d.multi==='Não'?' selected':''}>Não</option></select>
-      </div>
-      <div class="fg"><label>+2 alinhadores?</label>
-        <select id="f-mais2"><option value="">–</option><option${d.mais2==='Sim'?' selected':''}>Sim</option><option${d.mais2==='Não'?' selected':''}>Não</option></select>
-      </div>
-      <div class="fg"><label>Marca de eleição</label>
-        <select id="f-marca"><option value="">–</option>${MARCAS.map(m=>`<option value="${m}"${d.marca===m?' selected':''}>${m}</option>`).join('')}</select>
-      </div>
-      <div class="fg"><label>Usa braquetes?</label>
-        <select id="f-braq"><option value="">–</option>${BRAQ.map(b=>`<option value="${b}"${d.braq===b?' selected':''}>${b}</option>`).join('')}</select>
-      </div>
-      <div class="fg"><label>Qual marca de braquetes?</label>
-        <input id="f-marcabraq" value="${d.marcaBraq||''}" placeholder="Ex: 3M, Morelli, Abzil...">
-      </div>
-      <div class="fg"><label>Está no fluxo digital?</label>
-        <select id="f-fluxodig"><option value="">–</option><option value="Sim"${d.fluxoDig==='Sim'?' selected':''}>Sim</option><option value="Não"${d.fluxoDig==='Não'?' selected':''}>Não</option></select>
-      </div>
-      <div class="fg"><label>Satisfeito com scanner?</label>
-        <select id="f-scanner"><option value="">–</option><option value="Sim"${d.scanner==='Sim'?' selected':''}>Sim</option><option value="Não"${d.scanner==='Não'?' selected':''}>Não</option><option value="Não tem scanner"${d.scanner==='Não tem scanner'?' selected':''}>Não tem scanner</option></select>
-      </div>
-      <div class="fg"><label>Modelo híbrido?</label>
-        <select id="f-hibrido"><option value="">–</option>${HIBRIDO.map(h=>`<option value="${h}"${d.hibrido===h?' selected':''}>${h}</option>`).join('')}</select>
-      </div>
-    </div>`:''}
-    ${showConv?`
-    <div class="section-divider" style="color:#14532D;border-color:#86EFAC">Etapas de credenciamento</div>
-    <div class="conv-steps">
-      ${CONV_STEPS.map((st,i)=>`
-        <div class="conv-step${i<convIdx?' done':i===convIdx?' current':''}" onclick="setConvStep(${i})">
-          <i class="ti ${i<convIdx?'ti-circle-check':i===convIdx?'ti-circle-dot':'ti-circle'}"></i>${st}
-        </div>`).join('')}
-    </div>
-    <input type="hidden" id="f-conv" value="${d.convStep||''}">`:''}
-    <div class="section-divider">Prioridade & Potencial</div>
-    <div class="form-grid">
-      <div class="fg"><label>Prioridade</label>
-        <select id="f-prior">
-          <option value="">– Selecione –</option>
-          <option value="🔴 Alta"${d.prior==='🔴 Alta'?' selected':''}>🔴 Alta</option>
-          <option value="🟡 Média"${d.prior==='🟡 Média'?' selected':''}>🟡 Média</option>
-          <option value="🟢 Baixa"${d.prior==='🟢 Baixa'?' selected':''}>🟢 Baixa</option>
-        </select>
-      </div>
-      <div class="fg"><label>Potencial (casos Spark/mês)</label>
-        <select id="f-pot">
-          <option value="">– Selecione –</option>
-          <option value="Alto (10+)"${d.potencial==='Alto (10+)'?' selected':''}>Alto (10+ casos/mês)</option>
-          <option value="Médio (5-9)"${d.potencial==='Médio (5-9)'?' selected':''}>Médio (5–9 casos/mês)</option>
-          <option value="Baixo (1-4)"${d.potencial==='Baixo (1-4)'?' selected':''}>Baixo (1–4 casos/mês)</option>
-        </select>
-      </div>
-    </div>
-    <div class="section-divider">Observações</div>
-    <div class="fg full"><textarea id="f-obs" placeholder="Anotações livres...">${d.obs||''}</textarea></div>`;
-}
-
-function changeStatus(s){
-  const cur=collectForm(); cur.status=s;
-  document.getElementById('f-status').value=s;
-  buildForm(cur);
-}
-function setTry(t,el){
-  document.querySelectorAll('.try').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-  const fi=document.getElementById('f-tries'); if(fi)fi.value=t;
-}
-function setConvStep(i){
-  const fi=document.getElementById('f-conv'); if(fi)fi.value=CONV_STEPS[i];
-  document.querySelectorAll('.conv-step').forEach((el,idx)=>{
-    el.className='conv-step'+(idx<i?' done':idx===i?' current':'');
-    el.querySelector('i').className='ti '+(idx<i?'ti-circle-check':idx===i?'ti-circle-dot':'ti-circle');
-  });
-}
-function collectForm(){
-  return{nome:v('f-nome'),exec:v('fm-exec'),origem:v('f-orig'),clinica:v('f-clinica'),
-    wpp:v('f-wpp'),status:v('f-status'),tentativas:v('f-tries'),
-    dtContato:v('f-dtc'),dtUlt:null,proxAcao:v('f-prox'),descProx:v('f-descprox'),
-    pacs:v('f-pacs'),multi:v('f-multi'),mais2:v('f-mais2'),marca:v('f-marca'),
-    braq:v('f-braq'),marcaBraq:v('f-marcabraq'),fluxoDig:v('f-fluxodig'),scanner:v('f-scanner'),hibrido:v('f-hibrido'),convStep:v('f-conv'),obs:v('f-obs'),prior:v('f-prior'),potencial:v('f-pot')};
-}
-
-async function saveRec(){
-  const nome=v('f-nome').trim();
-  if(!nome){alert('Informe o nome do doutor(a)');return;}
-  setSyncStatus('syncing');
-  const rec={id:editId||uid(),...collectForm()};
-  try{
-    let result;
-    if(editId){ result = await sbUpdate(editId,rec); }
-    else { result = await sbInsert(rec); }
-    if (Array.isArray(result) && result[0]) {
-      const saved = result[0];
-      if (!saved.executivo || !saved.status) {
-        console.warn('Aviso: campos executivo/status vieram vazios do banco', saved);
-      }
-    }
-    closeModal();
-    await loadData(true);
-  }catch(e){setSyncStatus('error');alert('Erro ao salvar: '+e.message);}
-}
-
-async function delRec(){
-  if(!editId||!confirm('Excluir este doutor do funil?'))return;
-  setSyncStatus('syncing');
-  try{
-    await sbDelete(editId);
-    closeModal();
-    await loadData(true);
-  }catch(e){setSyncStatus('error');alert('Erro ao excluir: '+e.message);}
+  }).sort((a,b)=>(b.dtContato||'').localeCompare(a.dtContato||''));
+  const body=document.getElementById('lista-body');
+  if(!filtered.length){body.innerHTML='<div class="list-empty">Nenhum resultado</div>';return;}
+  body.innerHTML=filtered.map(d=>`<div class="list-row" onclick="openEdit('${d.id}')"><div><div class="list-name">${d.prior?'<span style="margin-right:3px">'+d.prior.split(' ')[0]+'</span>':''}${d.nome}</div><div class="list-clinic">${d.clinica||''}</div></div><div style="font-size:12px">${d.exec||'–'}</div><div><span class="pill ${PILL[d.status]||'p-repesc'}">${d.status||'–'}</span></div><div style="font-size:12px;color:#6B7280">${d.tentativas||'–'}</div><div style="font-size:11px;color:#6B7280">${d.proxAcao||'–'}</div><div style="color:#D1D5DB"><i class="ti ti-chevron-right"></i></div></div>`).join('');
 }
 
 function setTab(tab,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.section').forEach(s=>{s.classList.remove('active');s.style.display='none';});
+  document.querySelectorAll('.sec').forEach(s=>s.style.display='none');
   el.classList.add('active');
-  const sec = document.getElementById('sec-'+tab);
-  if(sec){sec.classList.add('active');sec.style.display='block';}
+  const sec=document.getElementById('sec-'+tab);
+  if(sec)sec.style.display='block';
   if(tab==='lista')renderLista();
   if(tab==='funil')renderFunil();
 }
 
-// Polling a cada 30s para sincronizar dados em tempo real
+function openNew(){editId=null;document.getElementById('mtitle').textContent='Novo Doutor(a)';document.getElementById('bdel').style.display='none';buildForm({status:'Em Abordagem',tentativas:'1ª tentativa'});document.getElementById('mwrap').style.display='flex';}
+function openEdit(id){editId=id;const d=data.find(x=>x.id===id);if(!d)return;document.getElementById('mtitle').textContent=d.nome||'Editar';document.getElementById('bdel').style.display='inline-flex';buildForm(d);document.getElementById('mwrap').style.display='flex';}
+function closeModal(){document.getElementById('mwrap').style.display='none';editId=null;}
+
+function buildForm(d){
+  const s=d.status||'Em Abordagem';
+  const showDiag=['Visita Agendada','Em Negociação','Credenciado'].includes(s);
+  const showConv=['Em Negociação','Credenciado'].includes(s);
+  const convIdx=CONV.indexOf(d.convStep||'');
+  const stabs=[{k:'Em Abordagem',cl:'stab-a',lbl:'Abordagem'},{k:'Visita Agendada',cl:'stab-v',lbl:'Visita Ag.'},{k:'Em Negociação',cl:'stab-n',lbl:'Negociação'},{k:'Credenciado',cl:'stab-c',lbl:'Credenciado'},{k:'Repescagem',cl:'stab-r',lbl:'Repescagem'}];
+  document.getElementById('mbody').innerHTML=`
+    <div class="status-tabs">${stabs.map(st=>`<div class="stab ${st.cl}${s===st.k?' active':''}" onclick="changeStatus('${st.k}')">${st.lbl}</div>`).join('')}</div>
+    <input type="hidden" id="f-status" value="${s}">
+    <div class="sdiv">Dados principais</div>
+    <div class="form-grid">
+      <div class="fg full"><label>Nome do Doutor(a) *</label><input id="f-nome" value="${d.nome||''}" placeholder="Dr. João Silva"></div>
+      <div class="fg"><label>Executivo *</label><select id="fm-exec">${EXECS.map(e=>`<option value="${e}"${d.exec===e?' selected':''}>${e}</option>`).join('')}</select></div>
+      <div class="fg"><label>Origem</label><select id="f-orig">${ORIGENS.map(o=>`<option value="${o}"${d.origem===o?' selected':''}>${o}</option>`).join('')}</select></div>
+      <div class="fg"><label>Clínica</label><input id="f-clinica" value="${d.clinica||''}" placeholder="Clínica Sorriso"></div>
+      <div class="fg"><label>WhatsApp</label><input id="f-wpp" value="${d.wpp||''}" placeholder="(11) 99999-0000"></div>
+    </div>
+    <div class="sdiv">Abordagem</div>
+    <label style="font-size:11px;font-weight:600;color:#6B7280;display:block;margin-bottom:5px">Tentativas de contato</label>
+    <div class="tries">${['1ª tentativa','2ª tentativa','3ª tentativa'].map(t=>`<div class="try${d.tentativas===t?' active':''}" onclick="setTry('${t}',this)">${t}</div>`).join('')}</div>
+    <input type="hidden" id="f-tries" value="${d.tentativas||'1ª tentativa'}">
+    <div class="form-grid" style="margin-top:10px">
+      <div class="fg"><label>Data 1º contato</label><input type="date" id="f-dtc" value="${d.dtContato||''}"></div>
+      <div class="fg"><label>Próxima ação — data</label><input type="date" id="f-prox" value="${d.proxAcao||''}"></div>
+      <div class="fg full"><label>O que fazer</label><input id="f-descprox" value="${d.descProx||''}" placeholder="Ex: Ligar para confirmar visita"></div>
+    </div>
+    <div class="sdiv">Prioridade & Potencial</div>
+    <div class="form-grid">
+      <div class="fg"><label>Prioridade</label><select id="f-prior"><option value="">– Selecione –</option>${['🔴 Alta','🟡 Média','🟢 Baixa'].map(p=>`<option value="${p}"${d.prior===p?' selected':''}>${p}</option>`).join('')}</select></div>
+      <div class="fg"><label>Potencial (casos Spark/mês)</label><select id="f-pot"><option value="">– Selecione –</option>${['Alto (10+)','Médio (5-9)','Baixo (1-4)'].map(p=>`<option value="${p}"${d.potencial===p?' selected':''}>${p}</option>`).join('')}</select></div>
+    </div>
+    ${showDiag?`
+    <div class="sdiv" style="color:#92400E;border-color:#FDE68A">Diagnóstico clínico (1ª visita)</div>
+    <div class="form-grid">
+      <div class="fg"><label>Pacs orto/mês</label><input id="f-pacs" value="${d.pacs||''}" placeholder="Ex: 20"></div>
+      <div class="fg"><label>Multidisciplinar?</label><select id="f-multi"><option value="">–</option><option${d.multi==='Sim'?' selected':''}>Sim</option><option${d.multi==='Não'?' selected':''}>Não</option></select></div>
+      <div class="fg"><label>+2 alinhadores?</label><select id="f-mais2"><option value="">–</option><option${d.mais2==='Sim'?' selected':''}>Sim</option><option${d.mais2==='Não'?' selected':''}>Não</option></select></div>
+      <div class="fg"><label>Marca de eleição</label><select id="f-marca"><option value="">–</option>${MARCAS.map(m=>`<option value="${m}"${d.marca===m?' selected':''}>${m}</option>`).join('')}</select></div>
+      <div class="fg"><label>Usa braquetes?</label><select id="f-braq"><option value="">–</option>${BRAQ.map(b=>`<option value="${b}"${d.braq===b?' selected':''}>${b}</option>`).join('')}</select></div>
+      <div class="fg"><label>Qual marca de braquetes?</label><input id="f-marcabraq" value="${d.marcaBraq||''}" placeholder="Ex: 3M, Morelli..."></div>
+      <div class="fg"><label>Fluxo digital?</label><select id="f-fluxodig"><option value="">–</option><option${d.fluxoDig==='Sim'?' selected':''}>Sim</option><option${d.fluxoDig==='Não'?' selected':''}>Não</option></select></div>
+      <div class="fg"><label>Satisfeito com scanner?</label><select id="f-scanner"><option value="">–</option><option${d.scanner==='Sim'?' selected':''}>Sim</option><option${d.scanner==='Não'?' selected':''}>Não</option><option value="Não tem scanner"${d.scanner==='Não tem scanner'?' selected':''}>Não tem scanner</option></select></div>
+      <div class="fg"><label>Modelo híbrido?</label><select id="f-hibrido"><option value="">–</option>${HIBRIDO.map(h=>`<option value="${h}"${d.hibrido===h?' selected':''}>${h}</option>`).join('')}</select></div>
+    </div>`:''}
+    ${showConv?`
+    <div class="sdiv" style="color:#14532D;border-color:#86EFAC">Etapas de credenciamento</div>
+    ${CONV.map((st,i)=>`<div class="conv-step${i<convIdx?' done':i===convIdx?' current':''}" onclick="setConvStep(${i})"><i class="ti ${i<convIdx?'ti-circle-check':i===convIdx?'ti-circle-dot':'ti-circle'}"></i>${st}</div>`).join('')}
+    <input type="hidden" id="f-conv" value="${d.convStep||''}">`:''}
+    <div class="sdiv">Observações</div>
+    <div class="fg full"><textarea id="f-obs" placeholder="Anotações livres...">${d.obs||''}</textarea></div>
+  `;
+}
+
+function changeStatus(s){const cur=collectForm();cur.status=s;buildForm(cur);}
+function setTry(t,el){document.querySelectorAll('.try').forEach(b=>b.classList.remove('active'));el.classList.add('active');const fi=document.getElementById('f-tries');if(fi)fi.value=t;}
+function setConvStep(i){const fi=document.getElementById('f-conv');if(fi)fi.value=CONV[i];document.querySelectorAll('.conv-step').forEach((el,idx)=>{el.className='conv-step'+(idx<i?' done':idx===i?' current':'');el.querySelector('i').className='ti '+(idx<i?'ti-circle-check':idx===i?'ti-circle-dot':'ti-circle');});}
+
+function collectForm(){return{nome:v('f-nome'),exec:v('fm-exec'),origem:v('f-orig'),clinica:v('f-clinica'),wpp:v('f-wpp'),status:v('f-status'),tentativas:v('f-tries'),dtContato:v('f-dtc'),proxAcao:v('f-prox'),descProx:v('f-descprox'),pacs:v('f-pacs'),multi:v('f-multi'),mais2:v('f-mais2'),marca:v('f-marca'),braq:v('f-braq'),marcaBraq:v('f-marcabraq'),fluxoDig:v('f-fluxodig'),scanner:v('f-scanner'),hibrido:v('f-hibrido'),convStep:v('f-conv'),obs:v('f-obs'),prior:v('f-prior'),potencial:v('f-pot')};}
+
+async function saveRec(){
+  const nome=v('f-nome').trim();if(!nome){alert('Informe o nome');return;}
+  setSS('sync');
+  const rec={id:editId||uid(),...collectForm()};
+  try{if(editId)await sbUpdate(editId,rec);else await sbInsert(rec);closeModal();await loadData(true);}
+  catch(e){setSS('error');alert('Erro ao salvar: '+e.message);}
+}
+async function delRec(){
+  if(!editId||!confirm('Excluir?'))return;setSS('sync');
+  try{await sbDelete(editId);closeModal();await loadData(true);}
+  catch(e){setSS('error');alert('Erro: '+e.message);}
+}
+
+function copyMsg(id){
+  const el=document.getElementById(id);if(!el)return;
+  navigator.clipboard.writeText(el.innerText||el.textContent).then(()=>{
+    const btn=el.nextElementSibling;if(btn){const o=btn.innerHTML;btn.innerHTML='<i class="ti ti-check"></i> Copiado!';btn.style.color='#1D9E75';setTimeout(()=>{btn.innerHTML=o;btn.style.color='';},2000);}
+  }).catch(()=>alert('Selecione e copie manualmente.'));
+}
+
+function exportCSV(){
+  if(!data.length){alert('Sem dados');return;}
+  const cols=[['nome','Nome'],['exec','Executivo'],['clinica','Clínica'],['wpp','WhatsApp'],['origem','Origem'],['status','Status'],['tentativas','Tentativas'],['dtContato','Dt 1º Contato'],['proxAcao','Próxima Ação'],['descProx','O que fazer'],['prior','Prioridade'],['potencial','Potencial'],['pacs','Pacs/mês'],['multi','Multidisciplinar'],['mais2','+2 Alinhadores'],['marca','Marca Eleição'],['braq','Braquetes'],['marcaBraq','Marca Braquetes'],['fluxoDig','Fluxo Digital'],['scanner','Scanner'],['hibrido','Híbrido'],['convStep','Status Credenc.'],['obs','Obs']];
+  const esc=v=>'"'+String(v||'').replace(/"/g,'""')+'"';
+  const hdr=cols.map(([,l])=>esc(l)).join(';');
+  const rows=data.map(d=>cols.map(([k])=>esc(d[k]||'')).join(';'));
+  const csv='\uFEFF'+[hdr,...rows].join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download='Spark_Funil_'+today()+'.csv';a.click();
+}
+
+// Init
+document.querySelectorAll('.sec').forEach(s=>s.style.display='none');
+document.getElementById('sec-dashboard').style.display='block';
 loadData();
-pollInterval = setInterval(()=>loadData(true), 30000);
-
-// Ensure initial tab is visible
-document.querySelectorAll('.section').forEach(s=>s.style.display='none');
-const initSec = document.getElementById('sec-dashboard');
-if(initSec){initSec.style.display='block';}
-
-function exportCSV() {
-  if (!data.length) { alert('Nenhum dado para exportar.'); return; }
-  const cols = [
-    ['nome',       'Nome do Doutor(a)'],
-    ['exec',       'Executivo'],
-    ['clinica',    'Clínica'],
-    ['wpp',        'WhatsApp'],
-    ['origem',     'Origem'],
-    ['status',     'Status'],
-    ['tentativas', 'Tentativas'],
-    ['dtContato',  'Data 1º Contato'],
-
-    ['proxAcao',   'Próxima Ação'],
-    ['descProx',   'O que fazer'],
-    ['pacs',       'Pacs Orto/Mês'],
-    ['multi',      'Multidisciplinar?'],
-    ['mais2',      '+2 Alinhadores?'],
-    ['marca',      'Marca Eleição'],
-    ['braq',       'Braquetes'],
-    ['hibrido',    'Mod. Híbrido?'],
-    ['convStep',   'Status Credenciamento'],
-    ['prior',      'Prioridade'],
-    ['potencial',  'Potencial (casos/mês)'],
-    ['obs',        'Observações'],
-  ];
-  const esc = v => '"' + String(v||'').replace(/"/g,'""') + '"';
-  const header = cols.map(([,lbl]) => esc(lbl)).join(';');
-  const rows = data.map(d => cols.map(([key]) => esc(d[key]||'')).join(';'));
-  const csv = '\uFEFF' + [header, ...rows].join('\r\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  const date = new Date().toISOString().slice(0,10);
-  a.download = `Spark_Funil_${date}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function copyMsg(id) {
-  const el = document.getElementById(id);
-  if(!el) return;
-  const text = el.innerText || el.textContent;
-  navigator.clipboard.writeText(text).then(()=>{
-    const btn = el.nextElementSibling;
-    if(btn){ const orig=btn.innerHTML; btn.innerHTML='<i class="ti ti-check"></i> Copiado!'; btn.style.color='#1D9E75'; setTimeout(()=>{btn.innerHTML=orig;btn.style.color='';},2000); }
-  }).catch(()=>{ alert('Selecione o texto manualmente.'); });
-}
-</script>
-
-</div><
-
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js')
-      .then(r => console.log('SW registered'))
-      .catch(e => console.log('SW error:', e));
-  });
-}
+pollInterval=setInterval(()=>loadData(true),30000);
 </script>
 </body>
 </html>
