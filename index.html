@@ -258,7 +258,7 @@ let data=[],editId=null,pollInterval=null;
 function setSS(s){const d=document.getElementById('sdot'),l=document.getElementById('slbl');if(s==='ok'){d.className='sync-dot';l.textContent='Ao vivo';}else if(s==='sync'){d.className='sync-dot syncing';l.textContent='Sincronizando...';}else{d.className='sync-dot error';l.textContent='Erro de conexão';}}
 
 async function sbGet(){
-  const cols='id,nome,executivo,origem,indicador,clinica,wpp,status_funil,tentativas,dt_contato,prox_acao,desc_prox,pacs,multi,marcas_align,braq,marca_braq,scanner,hibrido,conv_step,dt_cred,tipo_cred,dt_cred_real,obs,prior,potencial,created_at';
+  const cols='id,nome,executivo,origem,indicador,clinica,wpp,status_funil,tentativas,dt_contato,prox_acao,desc_prox,pacs,multi,marcas_align,braq,marca_braq,scanner,sat_scanner,hibrido,conv_step,dt_cred,tipo_cred,dt_cred_real,obs,prior,potencial,created_at';
   const r=await fetch(SB_URL+'/rest/v1/prospeccoes?select='+cols+'&order=created_at.desc',{headers:HDR});
   if(!r.ok)throw new Error(await r.text());
   return r.json();
@@ -267,8 +267,8 @@ async function sbInsert(rec){const r=await fetch(SB_URL+'/rest/v1/prospeccoes',{
 async function sbUpdate(id,rec){const r=await fetch(SB_URL+'/rest/v1/prospeccoes?id=eq.'+id,{method:'PATCH',headers:HDR,body:JSON.stringify(toDb(rec))});if(!r.ok)throw new Error(await r.text());return r.json();}
 async function sbDelete(id){const r=await fetch(SB_URL+'/rest/v1/prospeccoes?id=eq.'+id,{method:'DELETE',headers:HDR});if(!r.ok)throw new Error(await r.text());}
 
-function toDb(d){return{id:d.id,nome:d.nome,executivo:d.exec,origem:d.origem,indicador:d.indicador||null,clinica:d.clinica,wpp:d.wpp,status_funil:d.status,tentativas:d.tentativas,dt_contato:d.dtContato||null,prox_acao:d.proxAcao||null,desc_prox:d.descProx||null,pacs:d.pacs||null,multi:d.multi||null,marcas_align:d.marcasAlign||null,braq:d.braq||null,marca_braq:d.marcaBraq||null,scanner:d.scanner||null,hibrido:d.hibrido||null,conv_step:d.convStep||null,dt_cred:d.dtCred||null,tipo_cred:d.tipoCred||null,dt_cred_real:d.dtCredReal||null,obs:d.obs||null,prior:d.prior||null,potencial:d.potencial||null};}
-function fromDb(r){return{id:r.id,nome:r.nome,exec:r.executivo,origem:r.origem,indicador:r.indicador,clinica:r.clinica,wpp:r.wpp,status:r.status_funil,tentativas:r.tentativas,dtContato:r.dt_contato,proxAcao:r.prox_acao,descProx:r.desc_prox,pacs:r.pacs,multi:r.multi,marcasAlign:r.marcas_align,braq:r.braq,marcaBraq:r.marca_braq,scanner:r.scanner,hibrido:r.hibrido,convStep:r.conv_step,dtCred:r.dt_cred,tipoCred:r.tipo_cred,dtCredReal:r.dt_cred_real,obs:r.obs,prior:r.prior,potencial:r.potencial};}
+function toDb(d){return{id:d.id,nome:d.nome,executivo:d.exec,origem:d.origem,indicador:d.indicador||null,clinica:d.clinica,wpp:d.wpp,status_funil:d.status,tentativas:d.tentativas,dt_contato:d.dtContato||null,prox_acao:d.proxAcao||null,desc_prox:d.descProx||null,pacs:d.pacs||null,multi:d.multi||null,marcas_align:d.marcasAlign||null,braq:d.braq||null,marca_braq:d.marcaBraq||null,scanner:d.scanner||null,sat_scanner:d.satScanner||null,hibrido:d.hibrido||null,conv_step:d.convStep||null,dt_cred:d.dtCred||null,tipo_cred:d.tipoCred||null,dt_cred_real:d.dtCredReal||null,obs:d.obs||null,prior:d.prior||null,potencial:d.potencial||null};}
+function fromDb(r){return{id:r.id,nome:r.nome,exec:r.executivo,origem:r.origem,indicador:r.indicador,clinica:r.clinica,wpp:r.wpp,status:r.status_funil,tentativas:r.tentativas,dtContato:r.dt_contato,proxAcao:r.prox_acao,descProx:r.desc_prox,pacs:r.pacs,multi:r.multi,marcasAlign:r.marcas_align,braq:r.braq,marcaBraq:r.marca_braq,scanner:r.scanner,satScanner:r.sat_scanner,hibrido:r.hibrido,convStep:r.conv_step,dtCred:r.dt_cred,tipoCred:r.tipo_cred,dtCredReal:r.dt_cred_real,obs:r.obs,prior:r.prior,potencial:r.potencial};}
 
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function v(id){const el=document.getElementById(id);return el?el.value:'';}
@@ -417,8 +417,8 @@ function buildForm(d){
       </div>
       <div class="fg"><label>Usa braquetes?</label><select id="f-braq"><option value="">–</option>${BRAQ.map(b=>`<option value="${b}"${d.braq===b?' selected':''}>${b}</option>`).join('')}</select></div>
       <div class="fg"><label>Qual marca de braquetes?</label><input id="f-marcabraq" value="${d.marcaBraq||''}" placeholder="Ex: 3M, Morelli..."></div>
-      <div class="fg"><label>Fluxo digital?</label><select id="f-fluxodig"><option value="">–</option><option${d.fluxoDig==='Sim'?' selected':''}>Sim</option><option${d.fluxoDig==='Não'?' selected':''}>Não</option></select></div>
       <div class="fg"><label>Tem Scanner?</label><select id="f-scanner"><option value="">–</option><option value="Dexis"${d.scanner==='Dexis'?' selected':''}>Dexis</option><option value="Itero"${d.scanner==='Itero'?' selected':''}>Itero</option><option value="3Shape"${d.scanner==='3Shape'?' selected':''}>3Shape</option><option value="Sirona"${d.scanner==='Sirona'?' selected':''}>Sirona</option><option value="Medit"${d.scanner==='Medit'?' selected':''}>Medit</option><option value="Planmeca"${d.scanner==='Planmeca'?' selected':''}>Planmeca</option><option value="Sirios"${d.scanner==='Sirios'?' selected':''}>Sirios</option><option value="Panda"${d.scanner==='Panda'?' selected':''}>Panda</option><option value="Virtuo"${d.scanner==='Virtuo'?' selected':''}>Virtuo</option><option value="Não Tenho"${d.scanner==='Não Tenho'?' selected':''}>Não Tenho</option></select></div>
+      <div class="fg"><label>Satisfeito com o scanner?</label><select id="f-sat-scanner"><option value="">–</option><option value="Sim"${d.satScanner==='Sim'?' selected':''}>Sim</option><option value="Não"${d.satScanner==='Não'?' selected':''}>Não</option></select></div>
       <div class="fg"><label>Modelo híbrido?</label><select id="f-hibrido"><option value="">–</option>${HIBRIDO.map(h=>`<option value="${h}"${d.hibrido===h?' selected':''}>${h}</option>`).join('')}</select></div>
     </div>`:''}
     ${showConv?`
@@ -469,7 +469,7 @@ function collectForm(){
     pacs:v('f-pacs'),multi:v('f-multi'),
     marcasAlign:v('f-marcas-align'),
     braq:v('f-braq'),marcaBraq:v('f-marcabraq'),
-    scanner:v('f-scanner'),hibrido:v('f-hibrido'),
+    scanner:v('f-scanner'),satScanner:v('f-sat-scanner'),hibrido:v('f-hibrido'),
     convStep:v('f-conv'),dtCred:v('f-dtcred'),tipoCred:v('f-tipocred'),
     dtCredReal:v('f-dtcredreal'),
     obs:v('f-obs'),prior:v('f-prior'),potencial:v('f-pot')
@@ -498,7 +498,7 @@ function copyMsg(id){
 
 function exportCSV(){
   if(!data.length){alert('Sem dados');return;}
-  const cols=[['nome','Nome'],['exec','Executivo'],['clinica','Clínica'],['wpp','WhatsApp'],['origem','Origem'],['status','Status'],['tentativas','Tentativas'],['dtContato','Dt 1º Contato'],['proxAcao','Próxima Ação'],['descProx','O que fazer'],['prior','Prioridade'],['potencial','Potencial'],['pacs','Pacs/mês'],['multi','Multidisciplinar'],['mais2','+2 Alinhadores'],['marca','Marca Eleição'],['braq','Braquetes'],['marcaBraq','Marca Braquetes'],['fluxoDig','Fluxo Digital'],['scanner','Scanner'],['hibrido','Híbrido'],['convStep','Status Credenc.'],['obs','Obs']];
+  const cols=[['nome','Nome'],['exec','Executivo'],['clinica','Clínica'],['wpp','WhatsApp'],['origem','Origem'],['status','Status'],['tentativas','Tentativas'],['dtContato','Dt 1º Contato'],['proxAcao','Próxima Ação'],['descProx','O que fazer'],['prior','Prioridade'],['potencial','Potencial'],['pacs','Pacs/mês'],['multi','Multidisciplinar'],['mais2','+2 Alinhadores'],['marca','Marca Eleição'],['braq','Braquetes'],['marcaBraq','Marca Braquetes'],['scanner','Scanner'],['satScanner','Satisfeito c/ Scanner'],['hibrido','Híbrido'],['convStep','Status Credenc.'],['obs','Obs']];
   const esc=v=>'"'+String(v||'').replace(/"/g,'""')+'"';
   const hdr=cols.map(([,l])=>esc(l)).join(';');
   const rows=data.map(d=>cols.map(([k])=>esc(d[k]||'')).join(';'));
