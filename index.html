@@ -235,7 +235,7 @@ Se agora não for o melhor momento, sem problema algum. Fico à disposição qua
 
 <script>
 const SB_URL='https://ngayznexxlwxpotdhmor.supabase.co';
-const SB_KEY='sb_publishable_5wUSRf-yyp9M0Adyayo25w_-JNuDOlR';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nYXl6bmV4eGx3eHBvdGRobW9yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExNzgxNTQsImV4cCI6MjA5Njc1NDE1NH0.4OBbve7jnpmOMBcru4cnvmeubqybIq-P6pkpGCLvdwE';
 const HDR={'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation'};
 
 const EXECS=['Guilherme Batochio','Bruno Scodino','William Galdino','Marcelo Giusti','Regiane Pagotto','Fabiano Nunes','Cirlene Fortuna','Pedro Nascimento','Adriana Lemos','Erica Lacerda','Celso Melgaço','Ana Carolina Barbeiro','Beatriz Miyake','Gisele de Oliveira','João Menezes','Leonardo Nunes'];
@@ -272,8 +272,16 @@ function daysSince(ds){if(!ds)return null;return Math.floor((Date.now()-new Date
 
 async function loadData(silent=false){
   if(!silent)setSS('sync');
-  try{const rows=await sbGet();data=rows.map(fromDb);setSS('ok');renderAll();}
-  catch(e){setSS('error');console.error(e);if(!silent)setTimeout(()=>loadData(true),5000);}
+  try{
+    const rows=await sbGet();
+    data=rows.map(fromDb);
+    setSS('ok');
+    renderAll();
+  }catch(e){
+    setSS('error');
+    console.error('Connection error:',e.message);
+    if(!silent)setTimeout(()=>loadData(true),5000);
+  }
 }
 
 function renderAll(){renderMet();renderDash();renderFunil();renderLista();}
