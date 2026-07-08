@@ -148,9 +148,12 @@ body{font-family:Arial,sans-serif;background:#F3F4F6;color:#1A1A1A;font-size:14p
 
 <div id="sec-funil" class="sec">
   <div class="legend">
-    <strong>Alertas:</strong>
-    <span>[W] +3 dias</span><span>[T] +7 dias</span><span>[!] +14 dias</span><span>[D] Ação vencida</span>
-    <span style="border-left:1px solid #E5E7EB;padding-left:14px"><strong>Prioridade:</strong></span>
+    <strong style="color:#1D4E45">⚡ Alertas:</strong>
+    <span>⚠️ <b>+3 dias</b></span>
+    <span>⏰ <b>+7 dias</b></span>
+    <span>🚨 <b>+14 dias</b></span>
+    <span>📅 <b>Ação vencida</b></span>
+    <span style="border-left:2px solid #E5E7EB;padding-left:14px"><strong style="color:#1D4E45">🎯 Prioridade:</strong></span>
     <span>🔴 Alta</span><span>🟡 Média</span><span>🟢 Baixa</span>
   </div>
   <div class="kanban" id="kanban"></div>
@@ -239,11 +242,13 @@ const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 const HDR={'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation'};
 
 const EXECS=['Guilherme Batochio','Bruno Scodino','William Galdino','Marcelo Giusti','Regiane Pagotto','Fabiano Nunes','Cirlene Fortuna','Pedro Nascimento','Adriana Lemos','Erica Lacerda','Celso Melgaço','Ana Carolina Barbeiro','Beatriz Miyake','Gisele de Oliveira','João Menezes','Leonardo Nunes'];
-const ORIGENS=['Leads Concorrência','Outras','Leads Congressos','Drs inativos Spark','Drs inativos Daimon'];
+const ORIGENS=['Leads Concorrência','Outras','Leads Congressos','Drs inativos Spark','Drs inativos Daimon','Indicação'];
+const MARCAS_ALIGN=['Spark','Align','Angel','Clear','SouSmile','SureSmile'];
 const MARCAS=['Spark','Align','Angel','Clear','Braquete','Outro'];
 const BRAQ=['Sim – finalização','Sim – preço','Não'];
 const HIBRIDO=['Sim','Não','Talvez'];
-const CONV=['Link Enviado','Link Pago','Cadastro Realizado','DTX Liberado','Credenciamento Agendado','Credenciamento Realizado'];
+const CONV_NEGOC=['Credenciado voucher 100%','Credenciado voucher 50%','Credenciado sem voucher','Credenciamento Agendado'];
+const CONV=['Credenciado voucher 100%','Credenciado voucher 50%','Credenciado sem voucher','Credenciamento Agendado','Credenciamento Realizado'];
 const STATUS=['Em Abordagem','Visita Agendada','Em Negociação','Credenciado','Repescagem'];
 const PILL={'Em Abordagem':'p-abord','Visita Agendada':'p-visita','Em Negociação':'p-negoc','Credenciado':'p-cred','Repescagem':'p-repesc'};
 const KAN={'Em Abordagem':{hdr:'#FEF9C3',tc:'#92400E',bc:'#713F12'},'Visita Agendada':{hdr:'#DBEAFE',tc:'#1E40AF',bc:'#1E3A5F'},'Em Negociação':{hdr:'#FFEDD5',tc:'#9A3412',bc:'#7C2D12'},'Credenciado':{hdr:'#DCFCE7',tc:'#166534',bc:'#14532D'},'Repescagem':{hdr:'#F3F4F6',tc:'#4B5563',bc:'#374151'}};
@@ -253,7 +258,7 @@ let data=[],editId=null,pollInterval=null;
 function setSS(s){const d=document.getElementById('sdot'),l=document.getElementById('slbl');if(s==='ok'){d.className='sync-dot';l.textContent='Ao vivo';}else if(s==='sync'){d.className='sync-dot syncing';l.textContent='Sincronizando...';}else{d.className='sync-dot error';l.textContent='Erro de conexão';}}
 
 async function sbGet(){
-  const cols='id,nome,executivo,origem,clinica,wpp,status_funil,tentativas,dt_contato,prox_acao,desc_prox,pacs,multi,mais2,marca,braq,marca_braq,fluxo_dig,scanner,hibrido,conv_step,obs,prior,potencial,created_at';
+  const cols='id,nome,executivo,origem,indicador,clinica,wpp,status_funil,tentativas,dt_contato,prox_acao,desc_prox,pacs,multi,marcas_align,braq,marca_braq,scanner,hibrido,conv_step,dt_cred,tipo_cred,dt_cred_real,obs,prior,potencial,created_at';
   const r=await fetch(SB_URL+'/rest/v1/prospeccoes?select='+cols+'&order=created_at.desc',{headers:HDR});
   if(!r.ok)throw new Error(await r.text());
   return r.json();
@@ -262,8 +267,8 @@ async function sbInsert(rec){const r=await fetch(SB_URL+'/rest/v1/prospeccoes',{
 async function sbUpdate(id,rec){const r=await fetch(SB_URL+'/rest/v1/prospeccoes?id=eq.'+id,{method:'PATCH',headers:HDR,body:JSON.stringify(toDb(rec))});if(!r.ok)throw new Error(await r.text());return r.json();}
 async function sbDelete(id){const r=await fetch(SB_URL+'/rest/v1/prospeccoes?id=eq.'+id,{method:'DELETE',headers:HDR});if(!r.ok)throw new Error(await r.text());}
 
-function toDb(d){return{id:d.id,nome:d.nome,executivo:d.exec,origem:d.origem,clinica:d.clinica,wpp:d.wpp,status_funil:d.status,tentativas:d.tentativas,dt_contato:d.dtContato||null,prox_acao:d.proxAcao||null,desc_prox:d.descProx||null,pacs:d.pacs||null,multi:d.multi||null,mais2:d.mais2||null,marca:d.marca||null,braq:d.braq||null,marca_braq:d.marcaBraq||null,fluxo_dig:d.fluxoDig||null,scanner:d.scanner||null,hibrido:d.hibrido||null,conv_step:d.convStep||null,obs:d.obs||null,prior:d.prior||null,potencial:d.potencial||null};}
-function fromDb(r){return{id:r.id,nome:r.nome,exec:r.executivo,origem:r.origem,clinica:r.clinica,wpp:r.wpp,status:r.status_funil,tentativas:r.tentativas,dtContato:r.dt_contato,proxAcao:r.prox_acao,descProx:r.desc_prox,pacs:r.pacs,multi:r.multi,mais2:r.mais2,marca:r.marca,braq:r.braq,marcaBraq:r.marca_braq,fluxoDig:r.fluxo_dig,scanner:r.scanner,hibrido:r.hibrido,convStep:r.conv_step,obs:r.obs,prior:r.prior,potencial:r.potencial};}
+function toDb(d){return{id:d.id,nome:d.nome,executivo:d.exec,origem:d.origem,indicador:d.indicador||null,clinica:d.clinica,wpp:d.wpp,status_funil:d.status,tentativas:d.tentativas,dt_contato:d.dtContato||null,prox_acao:d.proxAcao||null,desc_prox:d.descProx||null,pacs:d.pacs||null,multi:d.multi||null,marcas_align:d.marcasAlign||null,braq:d.braq||null,marca_braq:d.marcaBraq||null,scanner:d.scanner||null,hibrido:d.hibrido||null,conv_step:d.convStep||null,dt_cred:d.dtCred||null,tipo_cred:d.tipoCred||null,dt_cred_real:d.dtCredReal||null,obs:d.obs||null,prior:d.prior||null,potencial:d.potencial||null};}
+function fromDb(r){return{id:r.id,nome:r.nome,exec:r.executivo,origem:r.origem,indicador:r.indicador,clinica:r.clinica,wpp:r.wpp,status:r.status_funil,tentativas:r.tentativas,dtContato:r.dt_contato,proxAcao:r.prox_acao,descProx:r.desc_prox,pacs:r.pacs,multi:r.multi,marcasAlign:r.marcas_align,braq:r.braq,marcaBraq:r.marca_braq,scanner:r.scanner,hibrido:r.hibrido,convStep:r.conv_step,dtCred:r.dt_cred,tipoCred:r.tipo_cred,dtCredReal:r.dt_cred_real,obs:r.obs,prior:r.prior,potencial:r.potencial};}
 
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function v(id){const el=document.getElementById(id);return el?el.value:'';}
@@ -314,10 +319,10 @@ function renderFunil(){
       const skip=d.status==='Credenciado'||d.status==='Repescagem';
       let icon='';
       if(!skip){
-        if(dias!==null&&dias>=14)icon='[!]';
-        else if(venc)icon='[D]';
-        else if(dias!==null&&dias>=7)icon='[T]';
-        else if(dias!==null&&dias>=3)icon='[W]';
+        if(dias!==null&&dias>=14)icon='🚨';
+        else if(venc)icon='📅';
+        else if(dias!==null&&dias>=7)icon='⏰';
+        else if(dias!==null&&dias>=3)icon='⚠️';
       }
       const nm=d.exec?(d.exec.split(' ')[0]+' '+(d.exec.split(' ')[1]||'')):'';
       const pr=d.prior?d.prior.split(' ')[0]+' ':'';
@@ -380,7 +385,8 @@ function buildForm(d){
     <div class="form-grid">
       <div class="fg full"><label>Nome do Doutor(a) *</label><input id="f-nome" value="${d.nome||''}" placeholder="Dr. João Silva"></div>
       <div class="fg"><label>Executivo *</label><select id="fm-exec">${EXECS.map(e=>`<option value="${e}"${d.exec===e?' selected':''}>${e}</option>`).join('')}</select></div>
-      <div class="fg"><label>Origem</label><select id="f-orig">${ORIGENS.map(o=>`<option value="${o}"${d.origem===o?' selected':''}>${o}</option>`).join('')}</select></div>
+      <div class="fg"><label>Origem</label><select id="f-orig" onchange="checkIndicacao()">${ORIGENS.map(o=>`<option value="${o}"${d.origem===o?' selected':''}>${o}</option>`).join('')}</select></div>
+      ${d.origem==='Indicação'?'<div class="fg full" id="indicador-field"><label>Qual Dr(a). indicou?</label><input id="f-indicador" value="'+(d.indicador||'')+'" placeholder="Dr. João Silva"></div>':'<div class="fg" id="indicador-field" style="display:none"><label>Qual Dr(a). indicou?</label><input id="f-indicador" value="'+(d.indicador||'')+'" placeholder="Dr. João Silva"></div>'}
       <div class="fg"><label>Clínica</label><input id="f-clinica" value="${d.clinica||''}" placeholder="Clínica Sorriso"></div>
       <div class="fg"><label>WhatsApp</label><input id="f-wpp" value="${d.wpp||''}" placeholder="(11) 99999-0000"></div>
     </div>
@@ -403,18 +409,29 @@ function buildForm(d){
     <div class="form-grid">
       <div class="fg"><label>Pacs orto/mês</label><input id="f-pacs" value="${d.pacs||''}" placeholder="Ex: 20"></div>
       <div class="fg"><label>Multidisciplinar?</label><select id="f-multi"><option value="">–</option><option${d.multi==='Sim'?' selected':''}>Sim</option><option${d.multi==='Não'?' selected':''}>Não</option></select></div>
-      <div class="fg"><label>+2 alinhadores?</label><select id="f-mais2"><option value="">–</option><option${d.mais2==='Sim'?' selected':''}>Sim</option><option${d.mais2==='Não'?' selected':''}>Não</option></select></div>
-      <div class="fg"><label>Marca de eleição</label><select id="f-marca"><option value="">–</option>${MARCAS.map(m=>`<option value="${m}"${d.marca===m?' selected':''}>${m}</option>`).join('')}</select></div>
+      <div class="fg full"><label>Marcas de alinhadores que utiliza</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px" id="marcas-check">
+          ${MARCAS_ALIGN.map(m=>'<label style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:400;color:#374151;cursor:pointer"><input type="checkbox" value="'+m+'" '+(d.marcasAlign&&d.marcasAlign.includes(m)?'checked':'')+' onchange="updateMarcas()" style="width:auto"> '+m+'</label>').join('')}
+        </div>
+        <input type="hidden" id="f-marcas-align" value="${d.marcasAlign||''}">
+      </div>
       <div class="fg"><label>Usa braquetes?</label><select id="f-braq"><option value="">–</option>${BRAQ.map(b=>`<option value="${b}"${d.braq===b?' selected':''}>${b}</option>`).join('')}</select></div>
       <div class="fg"><label>Qual marca de braquetes?</label><input id="f-marcabraq" value="${d.marcaBraq||''}" placeholder="Ex: 3M, Morelli..."></div>
       <div class="fg"><label>Fluxo digital?</label><select id="f-fluxodig"><option value="">–</option><option${d.fluxoDig==='Sim'?' selected':''}>Sim</option><option${d.fluxoDig==='Não'?' selected':''}>Não</option></select></div>
-      <div class="fg"><label>Satisfeito com scanner?</label><select id="f-scanner"><option value="">–</option><option${d.scanner==='Sim'?' selected':''}>Sim</option><option${d.scanner==='Não'?' selected':''}>Não</option><option value="Não tem scanner"${d.scanner==='Não tem scanner'?' selected':''}>Não tem scanner</option></select></div>
+      <div class="fg"><label>Tem Scanner?</label><select id="f-scanner"><option value="">–</option><option value="Dexis"${d.scanner==='Dexis'?' selected':''}>Dexis</option><option value="Itero"${d.scanner==='Itero'?' selected':''}>Itero</option><option value="3Shape"${d.scanner==='3Shape'?' selected':''}>3Shape</option><option value="Sirona"${d.scanner==='Sirona'?' selected':''}>Sirona</option><option value="Medit"${d.scanner==='Medit'?' selected':''}>Medit</option><option value="Planmeca"${d.scanner==='Planmeca'?' selected':''}>Planmeca</option><option value="Sirios"${d.scanner==='Sirios'?' selected':''}>Sirios</option><option value="Panda"${d.scanner==='Panda'?' selected':''}>Panda</option><option value="Virtuo"${d.scanner==='Virtuo'?' selected':''}>Virtuo</option><option value="Não Tenho"${d.scanner==='Não Tenho'?' selected':''}>Não Tenho</option></select></div>
       <div class="fg"><label>Modelo híbrido?</label><select id="f-hibrido"><option value="">–</option>${HIBRIDO.map(h=>`<option value="${h}"${d.hibrido===h?' selected':''}>${h}</option>`).join('')}</select></div>
     </div>`:''}
     ${showConv?`
     <div class="sdiv" style="color:#14532D;border-color:#86EFAC">Etapas de credenciamento</div>
-    ${CONV.map((st,i)=>`<div class="conv-step${i<convIdx?' done':i===convIdx?' current':''}" onclick="setConvStep(${i})"><i class="ti ${i<convIdx?'ti-circle-check':i===convIdx?'ti-circle-dot':'ti-circle'}"></i>${st}</div>`).join('')}
-    <input type="hidden" id="f-conv" value="${d.convStep||''}">`:''}
+    ${(s==='Em Negociação'?CONV_NEGOC:['Credenciamento Realizado']).map((st,i)=>{
+      const allConv=s==='Em Negociação'?CONV_NEGOC:['Credenciamento Realizado'];
+      const ci=allConv.indexOf(d.convStep||'');
+      return '<div class="conv-step'+(i<ci?' done':i===ci?' current':'')+'" onclick="setConvStep('+i+','+JSON.stringify(allConv)+')">'
+        +'<i class="ti '+(i<ci?'ti-circle-check':i===ci?'ti-circle-dot':'ti-circle')+'"></i>'+st+'</div>';
+    }).join('')}
+    <input type="hidden" id="f-conv" value="${d.convStep||''}">
+    ${s==='Em Negociação'?'<div class="form-grid" style="margin-top:10px"><div class="fg"><label>Data credenciamento agendado</label><input type="date" id="f-dtcred" value="'+( d.dtCred||'')+'"></div><div class="fg"><label>Tipo de credenciamento</label><input id="f-tipocred" value="'+(d.tipoCred||'')+'" placeholder="Ex: Presencial SP"></div></div>':''} 
+    ${s==='Credenciado'?'<div class="form-grid" style="margin-top:10px"><div class="fg"><label>Data credenciamento realizado</label><input type="date" id="f-dtcredreal" value="'+(d.dtCredReal||'')+'"></div></div>':''}`:''}
     <div class="sdiv">Observações</div>
     <div class="fg full"><textarea id="f-obs" placeholder="Anotações livres...">${d.obs||''}</textarea></div>
   `;
@@ -422,9 +439,42 @@ function buildForm(d){
 
 function changeStatus(s){const cur=collectForm();cur.status=s;buildForm(cur);}
 function setTry(t,el){document.querySelectorAll('.try').forEach(b=>b.classList.remove('active'));el.classList.add('active');const fi=document.getElementById('f-tries');if(fi)fi.value=t;}
-function setConvStep(i){const fi=document.getElementById('f-conv');if(fi)fi.value=CONV[i];document.querySelectorAll('.conv-step').forEach((el,idx)=>{el.className='conv-step'+(idx<i?' done':idx===i?' current':'');el.querySelector('i').className='ti '+(idx<i?'ti-circle-check':idx===i?'ti-circle-dot':'ti-circle');});}
 
-function collectForm(){return{nome:v('f-nome'),exec:v('fm-exec'),origem:v('f-orig'),clinica:v('f-clinica'),wpp:v('f-wpp'),status:v('f-status'),tentativas:v('f-tries'),dtContato:v('f-dtc'),proxAcao:v('f-prox'),descProx:v('f-descprox'),pacs:v('f-pacs'),multi:v('f-multi'),mais2:v('f-mais2'),marca:v('f-marca'),braq:v('f-braq'),marcaBraq:v('f-marcabraq'),fluxoDig:v('f-fluxodig'),scanner:v('f-scanner'),hibrido:v('f-hibrido'),convStep:v('f-conv'),obs:v('f-obs'),prior:v('f-prior'),potencial:v('f-pot')};}
+
+function updateMarcas(){
+  const checks=document.querySelectorAll('#marcas-check input[type=checkbox]:checked');
+  const vals=Array.from(checks).map(c=>c.value).join(',');
+  const fi=document.getElementById('f-marcas-align');
+  if(fi)fi.value=vals;
+}
+function checkIndicacao(){
+  const sel=document.getElementById('f-orig');
+  const field=document.getElementById('indicador-field');
+  if(field){field.style.display=sel&&sel.value==='Indicação'?'flex':'none';}
+}
+function setConvStep(i,arr){
+  if(!arr)arr=CONV;
+  const fi=document.getElementById('f-conv');
+  if(fi)fi.value=arr[i];
+  document.querySelectorAll('.conv-step').forEach((el,idx)=>{
+    el.className='conv-step'+(idx<i?' done':idx===i?' current':'');
+    el.querySelector('i').className='ti '+(idx<i?'ti-circle-check':idx===i?'ti-circle-dot':'ti-circle');
+  });
+}
+function collectForm(){
+  return{
+    nome:v('f-nome'),exec:v('fm-exec'),origem:v('f-orig'),indicador:v('f-indicador'),
+    clinica:v('f-clinica'),wpp:v('f-wpp'),status:v('f-status'),tentativas:v('f-tries'),
+    dtContato:v('f-dtc'),proxAcao:v('f-prox'),descProx:v('f-descprox'),
+    pacs:v('f-pacs'),multi:v('f-multi'),
+    marcasAlign:v('f-marcas-align'),
+    braq:v('f-braq'),marcaBraq:v('f-marcabraq'),
+    scanner:v('f-scanner'),hibrido:v('f-hibrido'),
+    convStep:v('f-conv'),dtCred:v('f-dtcred'),tipoCred:v('f-tipocred'),
+    dtCredReal:v('f-dtcredreal'),
+    obs:v('f-obs'),prior:v('f-prior'),potencial:v('f-pot')
+  };
+}
 
 async function saveRec(){
   const nome=v('f-nome').trim();if(!nome){alert('Informe o nome');return;}
