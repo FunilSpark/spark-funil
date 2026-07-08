@@ -308,15 +308,34 @@ function renderDash(){
 function renderFunil(){
   document.getElementById('kanban').innerHTML=STATUS.map(st=>{
     const items=data.filter(d=>d.status===st),col=KAN[st];
-    return `<div class="k-col"><div class="k-hdr" style="background:${col.hdr}"><span class="k-title" style="color:${col.tc}">${st}</span><span class="k-badge" style="background:${col.hdr};color:${col.bc}">${items.length}</span></div><div class="k-body">${items.length?items.map(d=>{
-      const dias=daysSince(d.dtContato),venc=d.proxAcao&&d.proxAcao<today(),skip=d.status==='Credenciado'||d.status==='Repescagem';
+    const cards=items.length?items.map(d=>{
+      const dias=daysSince(d.dtContato);
+      const venc=d.proxAcao&&d.proxAcao<today();
+      const skip=d.status==='Credenciado'||d.status==='Repescagem';
       let icon='';
-      if(!skip){if(dias!==null&&dias>=14)icon='🚨';else if(venc)icon='📅';else if(dias!==null&&dias>=7)icon='⏰';else if(dias!==null&&dias>=3)icon='⚠️';}
-      return `<div class="k-card" onclick="openEdit('${d.id}')"><div class="k-name">${d.nome}${icon?\' <span style="font-size:10px">\'+icon+\'</span>\':''}</div><div class="k-sub"><span>${d.exec?(d.exec.split(' ')[0]+' '+(d.exec.split(' ')[1]||'')):''}</span><span>${d.prior?d.prior.split(' ')[0]+' ':''}${d.tentativas||''}</span></div></div>`;
-    }).join(''):'<div class="k-empty">–</div>'}</div></div>`;
+      if(!skip){
+        if(dias!==null&&dias>=14)icon='🚨';
+        else if(venc)icon='📅';
+        else if(dias!==null&&dias>=7)icon='⏰';
+        else if(dias!==null&&dias>=3)icon='⚠️';
+      }
+      const nm=d.exec?(d.exec.split(' ')[0]+' '+(d.exec.split(' ')[1]||'')):'';
+      const pr=d.prior?d.prior.split(' ')[0]+' ':'';
+      return '<div class="k-card" data-id="'+d.id+'">'
+        +'<div class="k-name">'+d.nome+(icon?' <span style="font-size:10px">'+icon+'</span>':'')+'</div>'
+        +'<div class="k-sub"><span>'+nm+'</span><span>'+pr+(d.tentativas||'')+'</span></div>'
+        +'</div>';
+    }).join(''):'<div class="k-empty">–</div>';
+    return '<div class="k-col">'
+      +'<div class="k-hdr" style="background:'+col.hdr+'">'
+      +'<span class="k-title" style="color:'+col.tc+'">'+st+'</span>'
+      +'<span class="k-badge" style="background:'+col.hdr+';color:'+col.bc+'">'+items.length+'</span>'
+      +'</div><div class="k-body">'+cards+'</div></div>';
   }).join('');
+  document.querySelectorAll('.k-card[data-id]').forEach(c=>{
+    c.onclick=()=>openEdit(c.getAttribute('data-id'));
+  });
 }
-
 function renderLista(){
   const busca=(document.getElementById('busca')?.value||'').toLowerCase();
   const fE=document.getElementById('f-exec-fil')?.value||'';
