@@ -757,10 +757,10 @@ async function delRec(){
 
 function setTab(tab,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>{s.classList.remove('active');s.style.display='none';});
   el.classList.add('active');
   const sec = document.getElementById('sec-'+tab);
-  if(sec) sec.classList.add('active');
+  if(sec){sec.classList.add('active');sec.style.display='block';}
   if(tab==='lista')renderLista();
   if(tab==='funil')renderFunil();
 }
@@ -768,6 +768,11 @@ function setTab(tab,el){
 // Polling a cada 30s para sincronizar dados em tempo real
 loadData();
 pollInterval = setInterval(()=>loadData(true), 30000);
+
+// Ensure initial tab is visible
+document.querySelectorAll('.section').forEach(s=>s.style.display='none');
+const initSec = document.getElementById('sec-dashboard');
+if(initSec){initSec.style.display='block';}
 
 function exportCSV() {
   if (!data.length) { alert('Nenhum dado para exportar.'); return; }
