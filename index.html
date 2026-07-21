@@ -328,7 +328,7 @@ function renderFunil(){
       const pr=d.prior?d.prior.split(' ')[0]+' ':'';
       return '<div class="k-card" data-id="'+d.id+'">'
         +'<div class="k-name">'+d.nome+(icon?' <span style="font-size:10px">'+icon+'</span>':'')+'</div>'
-        +'<div class="k-sub"><span>'+nm+'</span><span>'+pr+(d.tentativas||'')+'</span></div>'
+        +'<div class="k-sub"><span>'+nm+'</span><span>'+pr+(d.status==='Em Abordagem'?(d.tentativas||''):'')+'</span></div>'
         +'</div>';
     }).join(''):'<div class="k-empty">–</div>';
     return '<div class="k-col">'
@@ -426,7 +426,8 @@ function buildForm(d){
     ${(s==='Em Negociação'?CONV_NEGOC:['Credenciamento Realizado']).map((st,i)=>{
       const allConv=s==='Em Negociação'?CONV_NEGOC:['Credenciamento Realizado'];
       const ci=allConv.indexOf(d.convStep||'');
-      return '<div class="conv-step'+(i<ci?' done':i===ci?' current':'')+'" onclick="setConvStep('+i+','+JSON.stringify(allConv)+')">'
+      const ctx2=s==='Em Negociação'?'negoc':'cred';
+      return '<div class="conv-step'+(i<ci?' done':i===ci?' current':'')+'" data-idx="'+i+'" data-ctx="'+ctx2+'" onclick="pickConvStep(this)">'
         +'<i class="ti '+(i<ci?'ti-circle-check':i===ci?'ti-circle-dot':'ti-circle')+'"></i>'+st+'</div>';
     }).join('')}
     <input type="hidden" id="f-conv" value="${d.convStep||''}">
@@ -451,6 +452,17 @@ function checkIndicacao(){
   const sel=document.getElementById('f-orig');
   const field=document.getElementById('indicador-field');
   if(field){field.style.display=sel&&sel.value==='Indicação'?'flex':'none';}
+}
+function pickConvStep(el){
+  const idx=parseInt(el.getAttribute('data-idx'));
+  const ctx=el.getAttribute('data-ctx');
+  const arr=ctx==='negoc'?CONV_NEGOC:['Credenciamento Realizado'];
+  const fi=document.getElementById('f-conv');
+  if(fi)fi.value=arr[idx];
+  document.querySelectorAll('.conv-step').forEach((e,i)=>{
+    e.className='conv-step'+(i<idx?' done':i===idx?' current':'');
+    e.querySelector('i').className='ti '+(i<idx?'ti-circle-check':i===idx?'ti-circle-dot':'ti-circle');
+  });
 }
 function setConvStep(i,arr){
   if(!arr)arr=CONV;
