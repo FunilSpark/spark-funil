@@ -119,6 +119,19 @@ body{font-family:Arial,sans-serif;background:#F3F4F6;color:#1A1A1A;font-size:14p
 .btn-primary:hover{background:#0F6E56}
 .btn-danger{color:#EF4444;border-color:#FECACA}
 .list-empty{text-align:center;padding:32px;color:#9CA3AF}
+.rank-card{background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;transition:box-shadow .15s}
+.rank-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.rank-pos{font-size:22px;font-weight:700;min-width:36px;text-align:center}
+.rank-name{font-size:14px;font-weight:600;flex:1}
+.rank-sub{font-size:11px;color:#6B7280;margin-top:2px}
+.rank-pts{font-size:20px;font-weight:700;color:#1D9E75}
+.rank-pts span{font-size:11px;font-weight:400;color:#6B7280}
+.pts-bar{height:6px;background:#F3F4F6;border-radius:20px;margin-top:6px;overflow:hidden}
+.pts-fill{height:100%;background:linear-gradient(90deg,#1D9E75,#1D4E45);border-radius:20px;transition:width .4s}
+.badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:20px;margin-left:6px;font-weight:600}
+.badge-fire{background:#FEF9C3;color:#713F12}
+.badge-top{background:#DCFCE7;color:#14532D}
+.badge-new{background:#DBEAFE;color:#1E3A5F}
 @media(max-width:800px){.metrics{grid-template-columns:repeat(3,1fr)}.dash-grid{grid-template-columns:1fr}.kanban{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}.fg.full{grid-column:1}.content{padding:12px}}
 </style>
 </head>
@@ -139,6 +152,7 @@ body{font-family:Arial,sans-serif;background:#F3F4F6;color:#1A1A1A;font-size:14p
   <button class="tab" onclick="setTab('funil',this)"><i class="ti ti-layout-columns"></i> Funil</button>
   <button class="tab" onclick="setTab('lista',this)"><i class="ti ti-list"></i> Lista</button>
   <button class="tab" onclick="setTab('mensagens',this)"><i class="ti ti-message-circle"></i> Mensagens</button>
+  <button class="tab" onclick="setTab('ranking',this)"><i class="ti ti-trophy"></i> Ranking</button>
 </div>
 <div class="content">
 
@@ -189,39 +203,64 @@ body{font-family:Arial,sans-serif;background:#F3F4F6;color:#1A1A1A;font-size:14p
     <div class="msg-card">
       <div class="msg-hdr" style="background:#DBEAFE;color:#1E3A5F">🔵  1ª Tentativa — Primeiro contato</div>
       <div class="msg-body">
-        <div class="msg-text" id="msg1">Olá Dr(a). [Nome], tudo bem?
+        <div class="msg-text" id="msg1">Olá Dr(a). [Nome]! 👋
 
-Sou [Seu Nome], da Spark Aligners - Ormco. Temos acompanhado o trabalho da sua clínica em [Região] e vemos um posicionamento muito alinhado com o que a Spark acredita em termos de qualidade e previsibilidade clínica.
+Imagino que todo dia você olha para o seu paciente e pensa em como entregar o melhor resultado possível — com previsibilidade, estética e o mínimo de retrabalho.
 
-Gostaria de te apresentar, de forma objetiva, como nossa tecnologia tem sido adotada por profissionais referência e entender se faz sentido para o seu momento.
+Sou [Seu Nome], da Spark Aligners by Ormco, e estou entrando em contato porque acredito que o que temos pode fazer sentido real para a sua clínica.
 
-Podemos agendar um bate-papo rápido? Terça ou quinta funciona melhor pra você?</div>
+O Spark é o sistema de alinhadores com tecnologia TruGEN™ — desenvolvido para dar a você mais controle clínico e ao seu paciente mais conforto e resultado.
+
+Poderia reservar 20 minutinhos para um bate-papo rápido? Terça ou quinta funciona melhor pra você?</div>
         <button class="msg-btn" onclick="copyMsg('msg1')"><i class="ti ti-copy"></i> Copiar mensagem</button>
       </div>
     </div>
     <div class="msg-card">
       <div class="msg-hdr" style="background:#FFEDD5;color:#7C2D12">🟠  2ª Tentativa — Follow-up (48h após 1ª)</div>
       <div class="msg-body">
-        <div class="msg-text" id="msg2">Olá, Dr(a). [Nome], tudo bem?
+        <div class="msg-text" id="msg2">Olá, Dr(a). [Nome]! 😊
 
-Passando apenas para retomar nossa conversa e saber se podemos agendar um bate-papo rápido para eu te apresentar a Spark - Ormco.
+Sei que a rotina clínica é intensa — mas não queria deixar passar sem tentar mais uma vez.
 
-Fico à disposição.</div>
+Muitos colegas que hoje usam o Spark me disseram que a maior surpresa foi perceber o quanto o sistema simplificou o fluxo deles — sem abrir mão da qualidade clínica.
+
+Posso te mostrar isso em 20 minutos? Fico à disposição para ir até sua clínica no horário que for melhor pra você.</div>
         <button class="msg-btn" onclick="copyMsg('msg2')"><i class="ti ti-copy"></i> Copiar mensagem</button>
       </div>
     </div>
     <div class="msg-card">
       <div class="msg-hdr" style="background:#F3F4F6;color:#374151">⚫  3ª Tentativa — Última abordagem (48h após 2ª)</div>
       <div class="msg-body">
-        <div class="msg-text" id="msg3">Olá, Dr(a). [Nome]!
+        <div class="msg-text" id="msg3">Dr(a). [Nome], bom dia! 🙏
 
-A Spark - Ormco tem sido adotada por muitos colegas pela previsibilidade clínica e simplicidade do fluxo.
+Essa será minha última mensagem — não quero tomar mais o seu tempo.
 
-Se agora não for o melhor momento, sem problema algum. Fico à disposição quando fizer sentido.</div>
+Só queria deixar registrado: o Spark Aligners está crescendo muito no Brasil justamente porque os doutores que experimentam percebem a diferença na prática — na aceitação do paciente, no resultado clínico e na simplicidade do dia a dia.
+
+Se em algum momento fizer sentido conhecer, estarei aqui.
+
+[Seu Nome] | Spark Aligners by Ormco
+📱 [Seu número]</div>
         <button class="msg-btn" onclick="copyMsg('msg3')"><i class="ti ti-copy"></i> Copiar mensagem</button>
       </div>
     </div>
-    <div class="msg-tip">💡 <strong>Dica:</strong> Substitua [Nome], [Seu Nome] e [Região] antes de enviar. Após cada tentativa, atualize o campo <strong>Tentativas</strong> no card do doutor.</div>
+    <div class="msg-tip">💡 <strong>Dica:</strong> Substitua [Nome], [Seu Nome] e [Seu número] antes de enviar. Personalize com algo que você sabe sobre a clínica do doutor para aumentar a taxa de resposta.</div>
+  </div>
+</div>
+
+<div id="sec-ranking" class="sec">
+  <div style="max-width:720px">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px" id="rank-kpis"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <h3 style="font-size:14px;font-weight:600;color:#1D4E45">🏆 Ranking do Time</h3>
+      <div style="font-size:11px;color:#6B7280;background:#F3F4F6;padding:4px 10px;border-radius:20px">
+        🔴 Cred.=10pts &nbsp;🟠 Negoc.=5pts &nbsp;🔵 Visita=3pts &nbsp;🟡 Abord.=1pt
+      </div>
+    </div>
+    <div id="rank-list"></div>
+    <div style="background:#F0FDF4;border:1px solid #A7F3D0;border-radius:8px;padding:12px 16px;margin-top:16px;font-size:12px;color:#14532D">
+      🎯 <strong>Sistema de pontos:</strong> Cada ação no funil gera pontos automaticamente. O ranking atualiza em tempo real para todo o time.
+    </div>
   </div>
 </div>
 
@@ -255,8 +294,8 @@ const MARCAS_ALIGN=['Spark','Align','Angel','Clear','SouSmile','SureSmile'];
 const MARCAS=['Spark','Align','Angel','Clear','Braquete','Outro'];
 const BRAQ=['Sim – finalização','Sim – preço','Não'];
 const HIBRIDO=['Sim','Não','Talvez'];
-const CONV_NEGOC=['Credenciado voucher 100%','Credenciado voucher 50%','Credenciado sem voucher','Credenciamento Agendado'];
-const CONV=['Credenciado voucher 100%','Credenciado voucher 50%','Credenciado sem voucher','Credenciamento Agendado','Credenciamento Realizado'];
+const CONV_NEGOC=['Credenciado voucher 100%','Credenciado voucher 50%','Credenciado voucher 30%','Credenciado sem voucher','Credenciamento Agendado'];
+const CONV=['Credenciado voucher 100%','Credenciado voucher 50%','Credenciado voucher 30%','Credenciado sem voucher','Credenciamento Agendado','Credenciamento Realizado'];
 const STATUS=['Em Abordagem','Visita Agendada','Em Negociação','Credenciado','Repescagem'];
 const PILL={'Em Abordagem':'p-abord','Visita Agendada':'p-visita','Em Negociação':'p-negoc','Credenciado':'p-cred','Repescagem':'p-repesc'};
 const KAN={'Em Abordagem':{hdr:'#FEF9C3',tc:'#92400E',bc:'#713F12'},'Visita Agendada':{hdr:'#DBEAFE',tc:'#1E40AF',bc:'#1E3A5F'},'Em Negociação':{hdr:'#FFEDD5',tc:'#9A3412',bc:'#7C2D12'},'Credenciado':{hdr:'#DCFCE7',tc:'#166534',bc:'#14532D'},'Repescagem':{hdr:'#F3F4F6',tc:'#4B5563',bc:'#374151'}};
@@ -374,6 +413,7 @@ function setTab(tab,el){
   if(sec)sec.style.display='block';
   if(tab==='lista')renderLista();
   if(tab==='funil')renderFunil();
+  if(tab==='ranking')renderRanking();
 }
 
 function openNew(){editId=null;document.getElementById('mtitle').textContent='Novo Doutor(a)';document.getElementById('bdel').style.display='none';buildForm({status:'Em Abordagem',tentativas:'1ª tentativa'});document.getElementById('mwrap').style.display='flex';}
@@ -507,6 +547,75 @@ async function delRec(){
   if(!editId||!confirm('Excluir?'))return;setSS('sync');
   try{await sbDelete(editId);closeModal();await loadData(true);}
   catch(e){setSS('error');alert('Erro: '+e.message);}
+}
+
+function calcPts(d){
+  const pts={'Em Abordagem':1,'Visita Agendada':3,'Em Negociação':5,'Credenciado':10,'Repescagem':0};
+  return pts[d.status]||0;
+}
+
+function renderRanking(){
+  const byExec={};
+  EXECS.forEach(e=>{byExec[e]={nome:e,total:0,cred:0,negoc:0,visita:0,abord:0,pts:0};});
+  data.forEach(d=>{
+    if(!d.exec||!byExec[d.exec])return;
+    const ex=byExec[d.exec];
+    ex.total++;
+    ex.pts+=calcPts(d);
+    if(d.status==='Credenciado')ex.cred++;
+    else if(d.status==='Em Negociação')ex.negoc++;
+    else if(d.status==='Visita Agendada')ex.visita++;
+    else if(d.status==='Em Abordagem')ex.abord++;
+  });
+
+  const ranked=Object.values(byExec).filter(e=>e.total>0).sort((a,b)=>b.pts-a.pts);
+  const maxPts=ranked.length?ranked[0].pts||1:1;
+
+  // KPIs
+  const totalCred=data.filter(d=>d.status==='Credenciado').length;
+  const totalProsp=data.length;
+  const topExec=ranked.length?ranked[0].nome.split(' ')[0]+' '+ranked[0].nome.split(' ')[1]:'–';
+  document.getElementById('rank-kpis').innerHTML=`
+    <div style="background:#DCFCE7;border-radius:8px;padding:14px;text-align:center;border:1px solid #A7F3D0">
+      <div style="font-size:24px;font-weight:700;color:#14532D">${totalCred}</div>
+      <div style="font-size:11px;color:#14532D;margin-top:2px">Total Credenciados</div>
+    </div>
+    <div style="background:#DBEAFE;border-radius:8px;padding:14px;text-align:center;border:1px solid #93C5FD">
+      <div style="font-size:24px;font-weight:700;color:#1E3A5F">${totalProsp}</div>
+      <div style="font-size:11px;color:#1E3A5F;margin-top:2px">Total Prospecções</div>
+    </div>
+    <div style="background:#FEF9C3;border-radius:8px;padding:14px;text-align:center;border:1px solid #FCD34D">
+      <div style="font-size:13px;font-weight:700;color:#713F12">🏆 ${topExec}</div>
+      <div style="font-size:11px;color:#713F12;margin-top:2px">Líder do Ranking</div>
+    </div>`;
+
+  if(!ranked.length){
+    document.getElementById('rank-list').innerHTML='<div class="list-empty">Nenhuma prospecção cadastrada ainda.</div>';
+    return;
+  }
+
+  const medals=['🥇','🥈','🥉'];
+  document.getElementById('rank-list').innerHTML=ranked.map((ex,i)=>{
+    const pos=medals[i]||(i+1+'º');
+    const pct=Math.round(ex.pts/maxPts*100);
+    let badge='';
+    if(i===0)badge='<span class="badge badge-top">🔥 Líder</span>';
+    else if(ex.cred>0)badge='<span class="badge badge-top">✅ Credenciou</span>';
+    else if(ex.total>=5)badge='<span class="badge badge-fire">⚡ Ativo</span>';
+    const clr=i===0?'#D97706':i===1?'#6B7280':i===2?'#92400E':'#9CA3AF';
+    return '<div class="rank-card">'
+      +'<div class="rank-pos" style="color:'+clr+'">'+pos+'</div>'
+      +'<div style="flex:1">'
+        +'<div class="rank-name">'+ex.nome+badge+'</div>'
+        +'<div class="rank-sub">🟢 '+ex.cred+' cred. &nbsp;·&nbsp; 🟠 '+ex.negoc+' negoc. &nbsp;·&nbsp; 🔵 '+ex.visita+' visitas &nbsp;·&nbsp; 🟡 '+ex.abord+' abord.</div>'
+        +'<div class="pts-bar"><div class="pts-fill" style="width:'+pct+'%"></div></div>'
+      +'</div>'
+      +'<div style="text-align:right">'
+        +'<div class="rank-pts">'+ex.pts+'<span> pts</span></div>'
+        +'<div style="font-size:10px;color:#9CA3AF">'+ex.total+' Drs</div>'
+      +'</div>'
+    +'</div>';
+  }).join('');
 }
 
 function copyMsg(id){
