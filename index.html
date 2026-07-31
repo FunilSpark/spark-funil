@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -277,6 +277,7 @@ const BRAQ=['Sim – finalização','Sim – preço','Não'];
 const HIBRIDO=['Sim','Não','Talvez'];
 const CONV_NEGOC=['Credenciado voucher 100%','Credenciado voucher 50%','Credenciado voucher 30%','Credenciado sem voucher','Credenciamento Agendado'];
 const CONV=['Credenciado voucher 100%','Credenciado voucher 50%','Credenciado voucher 30%','Credenciado sem voucher','Credenciamento Agendado','Credenciamento Realizado'];
+const GATILHOS=['Clínico','Preço','Marca','Atendimento'];
 const STATUS=['Em Abordagem','Visita Agendada','Em Negociação','Credenciado','Repescagem'];
 const PILL={'Em Abordagem':'p-abord','Visita Agendada':'p-visita','Em Negociação':'p-negoc','Credenciado':'p-cred','Repescagem':'p-repesc'};
 const KAN={'Em Abordagem':{hdr:'#FEF9C3',tc:'#92400E',bc:'#713F12'},'Visita Agendada':{hdr:'#DBEAFE',tc:'#1E40AF',bc:'#1E3A5F'},'Em Negociação':{hdr:'#FFEDD5',tc:'#9A3412',bc:'#7C2D12'},'Credenciado':{hdr:'#DCFCE7',tc:'#166534',bc:'#14532D'},'Repescagem':{hdr:'#F3F4F6',tc:'#4B5563',bc:'#374151'}};
@@ -295,8 +296,8 @@ async function sbInsert(rec){const r=await fetch(SB_URL+'/rest/v1/prospeccoes',{
 async function sbUpdate(id,rec){const r=await fetch(SB_URL+'/rest/v1/prospeccoes?id=eq.'+id,{method:'PATCH',headers:HDR,body:JSON.stringify(toDb(rec))});if(!r.ok)throw new Error(await r.text());return r.json();}
 async function sbDelete(id){const r=await fetch(SB_URL+'/rest/v1/prospeccoes?id=eq.'+id,{method:'DELETE',headers:HDR});if(!r.ok)throw new Error(await r.text());}
 
-function toDb(d){return{id:d.id,nome:d.nome,executivo:d.exec,origem:d.origem,indicador:d.indicador||null,clinica:d.clinica,wpp:d.wpp,status_funil:d.status,tentativas:d.tentativas,dt_contato:d.dtContato||null,prox_acao:d.proxAcao||null,desc_prox:d.descProx||null,pacs:d.pacs||null,multi:d.multi||null,marcas_align:d.marcasAlign||null,braq:d.braq||null,marca_braq:d.marcaBraq||null,scanner:d.scanner||null,sat_scanner:d.satScanner||null,hibrido:d.hibrido||null,conv_step:d.convStep||null,dt_cred:d.dtCred||null,tipo_cred:d.tipoCred||null,dt_cred_real:d.dtCredReal||null,obs:d.obs||null,prior:d.prior||null,potencial:d.potencial||null};}
-function fromDb(r){return{id:r.id,nome:r.nome,exec:r.executivo,origem:r.origem,indicador:r.indicador,clinica:r.clinica,wpp:r.wpp,status:r.status_funil,tentativas:r.tentativas,dtContato:r.dt_contato,proxAcao:r.prox_acao,descProx:r.desc_prox,pacs:r.pacs,multi:r.multi,marcasAlign:r.marcas_align,braq:r.braq,marcaBraq:r.marca_braq,scanner:r.scanner,satScanner:r.sat_scanner,hibrido:r.hibrido,convStep:r.conv_step,dtCred:r.dt_cred,tipoCred:r.tipo_cred,dtCredReal:r.dt_cred_real,obs:r.obs,prior:r.prior,potencial:r.potencial};}
+function toDb(d){return{id:d.id,nome:d.nome,executivo:d.exec,origem:d.origem,indicador:d.indicador||null,clinica:d.clinica,wpp:d.wpp,status_funil:d.status,tentativas:d.tentativas,dt_contato:d.dtContato||null,prox_acao:d.proxAcao||null,desc_prox:d.descProx||null,pacs:d.pacs||null,multi:d.multi||null,marcas_align:d.marcasAlign||null,braq:d.braq||null,marca_braq:d.marcaBraq||null,scanner:d.scanner||null,sat_scanner:d.satScanner||null,hibrido:d.hibrido||null,conv_step:d.convStep||null,dt_cred:d.dtCred||null,tipo_cred:d.tipoCred||null,dt_cred_real:d.dtCredReal||null,obs:d.obs||null,prior:d.prior||null,potencial:d.potencial||null,gatilhos:d.gatilhos||null,ob_init:d.obInit||null,dt_ob:d.dtOb||null,dt_1caso:d.dt1Caso||null};}
+function fromDb(r){return{id:r.id,nome:r.nome,exec:r.executivo,origem:r.origem,indicador:r.indicador,clinica:r.clinica,wpp:r.wpp,status:r.status_funil,tentativas:r.tentativas,dtContato:r.dt_contato,proxAcao:r.prox_acao,descProx:r.desc_prox,pacs:r.pacs,multi:r.multi,marcasAlign:r.marcas_align,braq:r.braq,marcaBraq:r.marca_braq,scanner:r.scanner,satScanner:r.sat_scanner,hibrido:r.hibrido,convStep:r.conv_step,dtCred:r.dt_cred,tipoCred:r.tipo_cred,dtCredReal:r.dt_cred_real,obs:r.obs,prior:r.prior,potencial:r.potencial,gatilhos:r.gatilhos,obInit:r.ob_init,dtOb:r.dt_ob,dt1Caso:r.dt_1caso};}
 
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function v(id){const el=document.getElementById(id);return el?el.value:'';}
@@ -461,7 +462,24 @@ function buildForm(d){
     }).join('')}
     <input type="hidden" id="f-conv" value="${d.convStep||''}">
     ${s==='Em Negociação'?'<div class="form-grid" style="margin-top:10px"><div class="fg"><label>Data credenciamento agendado</label><input type="date" id="f-dtcred" value="'+( d.dtCred||'')+'"></div><div class="fg"><label>Tipo de credenciamento</label><input id="f-tipocred" value="'+(d.tipoCred||'')+'" placeholder="Ex: Presencial SP"></div></div>':''} 
-    ${s==='Credenciado'?'<div class="form-grid" style="margin-top:10px"><div class="fg"><label>Data credenciamento realizado</label><input type="date" id="f-dtcredreal" value="'+(d.dtCredReal||'')+'"></div></div>':''}`:''}
+    ${s==='Credenciado'?`
+    <div class="form-grid" style="margin-top:10px">
+      <div class="fg"><label>Data credenciamento realizado</label><input type="date" id="f-dtcredreal" value="${d.dtCredReal||''}"></div>
+      <div class="fg"><label>Data 1º caso submetido</label><input type="date" id="f-dt1caso" value="${d.dt1Caso||''}"></div>
+    </div>
+    <div class="form-grid">
+      <div class="fg"><label>Onboarding iniciado?</label>
+        <select id="f-obinit"><option value="">–</option><option value="Sim"${d.obInit==='Sim'?' selected':''}>Sim</option><option value="Não"${d.obInit==='Não'?' selected':''}>Não</option></select>
+      </div>
+      <div class="fg"><label>Data início onboarding</label><input type="date" id="f-dtob" value="${d.dtOb||''}"></div>
+    </div>
+    <div class="sdiv" style="color:#14532D;border-color:#86EFAC">Gatilho de decisão pelo Spark</div>
+    <div class="fg full"><label>Por que esse Dr. escolheu o Spark?</label>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">
+        ${GATILHOS.map(g=>'<label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:400;color:#374151;cursor:pointer;background:'+(d.gatilhos&&d.gatilhos.includes(g)?'#DCFCE7':'#F9FAFB')+';padding:6px 12px;border-radius:6px;border:1px solid '+(d.gatilhos&&d.gatilhos.includes(g)?'#86EFAC':'#E5E7EB')+'"><input type="checkbox" value="'+g+'" '+(d.gatilhos&&d.gatilhos.includes(g)?'checked':'')+' onchange="updateGatilhos()" style="width:auto"> '+g+'</label>').join('')}
+      </div>
+      <input type="hidden" id="f-gatilhos" value="${d.gatilhos||''}">
+    </div>`:''}`:''}
     <div class="sdiv">Observações</div>
     <div class="fg full"><textarea id="f-obs" placeholder="Anotações livres...">${d.obs||''}</textarea></div>
   `;
@@ -471,6 +489,20 @@ function changeStatus(s){const cur=collectForm();cur.status=s;buildForm(cur);}
 function setTry(t,el){document.querySelectorAll('.try').forEach(b=>b.classList.remove('active'));el.classList.add('active');const fi=document.getElementById('f-tries');if(fi)fi.value=t;}
 
 
+function updateGatilhos(){
+  const checks=document.querySelectorAll('#f-gatilhos-wrap input[type=checkbox]:checked');
+  const vals=Array.from(document.querySelectorAll('input[value]:checked')).filter(c=>['Clínico','Preço','Marca','Atendimento'].includes(c.value)).map(c=>c.value).join(',');
+  const fi=document.getElementById('f-gatilhos');
+  if(fi)fi.value=vals;
+  // Update visual state of labels
+  document.querySelectorAll('input[type=checkbox]').forEach(cb=>{
+    if(['Clínico','Preço','Marca','Atendimento'].includes(cb.value)){
+      const lbl=cb.parentElement;
+      if(cb.checked){lbl.style.background='#DCFCE7';lbl.style.borderColor='#86EFAC';}
+      else{lbl.style.background='#F9FAFB';lbl.style.borderColor='#E5E7EB';}
+    }
+  });
+}
 function updateMarcas(){
   const checks=document.querySelectorAll('#marcas-check input[type=checkbox]:checked');
   const vals=Array.from(checks).map(c=>c.value).join(',');
