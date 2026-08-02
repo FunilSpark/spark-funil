@@ -303,7 +303,7 @@ let data=[],editId=null,pollInterval=null;
 function setSS(s){const d=document.getElementById('sdot'),l=document.getElementById('slbl');if(s==='ok'){d.className='sync-dot';l.textContent='Ao vivo';}else if(s==='sync'){d.className='sync-dot syncing';l.textContent='Sincronizando...';}else{d.className='sync-dot error';l.textContent='Erro de conexão';}}
 
 async function sbGet(){
-  const cols='id,nome,executivo,origem,indicador,clinica,wpp,status_funil,tentativas,dt_contato,prox_acao,desc_prox,pacs,multi,marcas_align,braq,marca_braq,scanner,sat_scanner,hibrido,conv_step,dt_cred,tipo_cred,dt_cred_real,obs,prior,potencial,created_at';
+  const cols='id,nome,executivo,origem,indicador,congresso,clinica,wpp,status_funil,tentativas,dt_contato,prox_acao,desc_prox,pacs,multi,marcas_align,braq,marca_braq,scanner,sat_scanner,hibrido,conv_step,dt_cred,tipo_cred,dt_cred_real,obs,prior,potencial,created_at';
   const r=await fetch(SB_URL+'/rest/v1/prospeccoes?select='+cols+'&order=created_at.desc',{headers:HDR});
   if(!r.ok)throw new Error(await r.text());
   return r.json();
@@ -312,8 +312,8 @@ async function sbInsert(rec){const r=await fetch(SB_URL+'/rest/v1/prospeccoes',{
 async function sbUpdate(id,rec){const r=await fetch(SB_URL+'/rest/v1/prospeccoes?id=eq.'+id,{method:'PATCH',headers:HDR,body:JSON.stringify(toDb(rec))});if(!r.ok)throw new Error(await r.text());return r.json();}
 async function sbDelete(id){const r=await fetch(SB_URL+'/rest/v1/prospeccoes?id=eq.'+id,{method:'DELETE',headers:HDR});if(!r.ok)throw new Error(await r.text());}
 
-function toDb(d){return{id:d.id,nome:d.nome,executivo:d.exec,origem:d.origem,indicador:d.indicador||null,clinica:d.clinica,wpp:d.wpp,status_funil:d.status,tentativas:d.tentativas,dt_contato:d.dtContato||null,prox_acao:d.proxAcao||null,desc_prox:d.descProx||null,pacs:d.pacs||null,multi:d.multi||null,marcas_align:d.marcasAlign||null,braq:d.braq||null,marca_braq:d.marcaBraq||null,scanner:d.scanner||null,sat_scanner:d.satScanner||null,hibrido:d.hibrido||null,conv_step:d.convStep||null,dt_cred:d.dtCred||null,tipo_cred:d.tipoCred||null,dt_cred_real:d.dtCredReal||null,obs:d.obs||null,prior:d.prior||null,potencial:d.potencial||null,gatilhos:d.gatilhos||null,ob_init:d.obInit||null,dt_ob:d.dtOb||null,dt_1caso:d.dt1Caso||null};}
-function fromDb(r){return{id:r.id,nome:r.nome,exec:r.executivo,origem:r.origem,indicador:r.indicador,clinica:r.clinica,wpp:r.wpp,status:r.status_funil,tentativas:r.tentativas,dtContato:r.dt_contato,proxAcao:r.prox_acao,descProx:r.desc_prox,pacs:r.pacs,multi:r.multi,marcasAlign:r.marcas_align,braq:r.braq,marcaBraq:r.marca_braq,scanner:r.scanner,satScanner:r.sat_scanner,hibrido:r.hibrido,convStep:r.conv_step,dtCred:r.dt_cred,tipoCred:r.tipo_cred,dtCredReal:r.dt_cred_real,obs:r.obs,prior:r.prior,potencial:r.potencial,gatilhos:r.gatilhos,obInit:r.ob_init,dtOb:r.dt_ob,dt1Caso:r.dt_1caso};}
+function toDb(d){return{id:d.id,nome:d.nome,executivo:d.exec,origem:d.origem,indicador:d.indicador||null,congresso:d.congresso||null,clinica:d.clinica,wpp:d.wpp,status_funil:d.status,tentativas:d.tentativas,dt_contato:d.dtContato||null,prox_acao:d.proxAcao||null,desc_prox:d.descProx||null,pacs:d.pacs||null,multi:d.multi||null,marcas_align:d.marcasAlign||null,braq:d.braq||null,marca_braq:d.marcaBraq||null,scanner:d.scanner||null,sat_scanner:d.satScanner||null,hibrido:d.hibrido||null,conv_step:d.convStep||null,dt_cred:d.dtCred||null,tipo_cred:d.tipoCred||null,dt_cred_real:d.dtCredReal||null,obs:d.obs||null,prior:d.prior||null,potencial:d.potencial||null,gatilhos:d.gatilhos||null,ob_init:d.obInit||null,dt_ob:d.dtOb||null,dt_1caso:d.dt1Caso||null};}
+function fromDb(r){return{id:r.id,nome:r.nome,exec:r.executivo,origem:r.origem,indicador:r.indicador,congresso:r.congresso,clinica:r.clinica,wpp:r.wpp,status:r.status_funil,tentativas:r.tentativas,dtContato:r.dt_contato,proxAcao:r.prox_acao,descProx:r.desc_prox,pacs:r.pacs,multi:r.multi,marcasAlign:r.marcas_align,braq:r.braq,marcaBraq:r.marca_braq,scanner:r.scanner,satScanner:r.sat_scanner,hibrido:r.hibrido,convStep:r.conv_step,dtCred:r.dt_cred,tipoCred:r.tipo_cred,dtCredReal:r.dt_cred_real,obs:r.obs,prior:r.prior,potencial:r.potencial,gatilhos:r.gatilhos,obInit:r.ob_init,dtOb:r.dt_ob,dt1Caso:r.dt_1caso};}
 
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function v(id){const el=document.getElementById(id);return el?el.value:'';}
@@ -433,6 +433,7 @@ function buildForm(d){
       <div class="fg"><label>Executivo *</label><select id="fm-exec">${EXECS.map(e=>`<option value="${e}"${d.exec===e?' selected':''}>${e}</option>`).join('')}</select></div>
       <div class="fg"><label>Origem</label><select id="f-orig" onchange="checkIndicacao()">${ORIGENS.map(o=>`<option value="${o}"${d.origem===o?' selected':''}>${o}</option>`).join('')}</select></div>
       ${d.origem==='Indicação'?'<div class="fg full" id="indicador-field"><label>Qual Dr(a). indicou?</label><input id="f-indicador" value="'+(d.indicador||'')+'" placeholder="Dr. João Silva"></div>':'<div class="fg" id="indicador-field" style="display:none"><label>Qual Dr(a). indicou?</label><input id="f-indicador" value="'+(d.indicador||'')+'" placeholder="Dr. João Silva"></div>'}
+      ${d.origem==='Leads Congressos'?'<div class="fg full" id="congresso-field"><label>Qual Congresso?</label><input id="f-congresso" value="'+(d.congresso||'')+'" placeholder="Ex: SBO 2026, CIOSP..."></div>':'<div class="fg" id="congresso-field" style="display:none"><label>Qual Congresso?</label><input id="f-congresso" value="'+(d.congresso||'')+'" placeholder="Ex: SBO 2026, CIOSP..."></div>'}
       <div class="fg"><label>Clínica</label><input id="f-clinica" value="${d.clinica||''}" placeholder="Clínica Sorriso"></div>
       <div class="fg"><label>WhatsApp</label><input id="f-wpp" value="${d.wpp||''}" placeholder="(11) 99999-0000"></div>
     </div>
@@ -473,8 +474,8 @@ function buildForm(d){
       const allConv=s==='Em Negociação'?CONV_NEGOC:['Credenciamento Realizado'];
       const ci=allConv.indexOf(d.convStep||'');
       const ctx2=s==='Em Negociação'?'negoc':'cred';
-      return '<div class="conv-step'+(i<ci?' done':i===ci?' current':'')+'" data-idx="'+i+'" data-ctx="'+ctx2+'" onclick="pickConvStep(this)">'
-        +'<i class="ti '+(i<ci?'ti-circle-check':i===ci?'ti-circle-dot':'ti-circle')+'"></i>'+st+'</div>';
+      return '<div class="conv-step'+(i===ci?' current':'')+'" data-idx="'+i+'" data-ctx="'+ctx2+'" onclick="pickConvStep(this)">'
+        +'<i class="ti '+(i===ci?'ti-circle-dot':'ti-circle')+'"></i>'+st+'</div>';
     }).join('')}
     <input type="hidden" id="f-conv" value="${d.convStep||''}">
     ${s==='Em Negociação'?'<div class="form-grid" style="margin-top:10px"><div class="fg"><label>Data credenciamento agendado</label><input type="date" id="f-dtcred" value="'+( d.dtCred||'')+'"></div><div class="fg"><label>Tipo de credenciamento</label><input id="f-tipocred" value="'+(d.tipoCred||'')+'" placeholder="Ex: Presencial SP"></div></div>':''} 
@@ -529,6 +530,8 @@ function checkIndicacao(){
   const sel=document.getElementById('f-orig');
   const field=document.getElementById('indicador-field');
   if(field){field.style.display=sel&&sel.value==='Indicação'?'flex':'none';}
+  const cField=document.getElementById('congresso-field');
+  if(cField){cField.style.display=sel&&sel.value==='Leads Congressos'?'flex':'none';}
 }
 function pickConvStep(el){
   const idx=parseInt(el.getAttribute('data-idx'));
@@ -537,8 +540,8 @@ function pickConvStep(el){
   const fi=document.getElementById('f-conv');
   if(fi)fi.value=arr[idx];
   document.querySelectorAll('.conv-step').forEach((e,i)=>{
-    e.className='conv-step'+(i<idx?' done':i===idx?' current':'');
-    e.querySelector('i').className='ti '+(i<idx?'ti-circle-check':i===idx?'ti-circle-dot':'ti-circle');
+    e.className='conv-step'+(i===idx?' current':'');
+    e.querySelector('i').className='ti '+(i===idx?'ti-circle-dot':'ti-circle');
   });
 }
 function setConvStep(i,arr){
@@ -552,7 +555,7 @@ function setConvStep(i,arr){
 }
 function collectForm(){
   return{
-    nome:v('f-nome'),exec:v('fm-exec'),origem:v('f-orig'),indicador:v('f-indicador'),
+    nome:v('f-nome'),exec:v('fm-exec'),origem:v('f-orig'),indicador:v('f-indicador'),congresso:v('f-congresso'),
     clinica:v('f-clinica'),wpp:v('f-wpp'),status:v('f-status'),tentativas:v('f-tries'),
     dtContato:v('f-dtc'),proxAcao:v('f-prox'),descProx:v('f-descprox'),
     pacs:v('f-pacs'),multi:v('f-multi'),
@@ -658,7 +661,7 @@ function copyMsg(id){
 
 function exportCSV(){
   if(!data.length){alert('Sem dados');return;}
-  const cols=[['nome','Nome'],['exec','Executivo'],['clinica','Clínica'],['wpp','WhatsApp'],['origem','Origem'],['status','Status'],['tentativas','Tentativas'],['dtContato','Dt 1º Contato'],['proxAcao','Próxima Ação'],['descProx','O que fazer'],['prior','Prioridade'],['potencial','Potencial'],['pacs','Pacs/mês'],['multi','Multidisciplinar'],['mais2','+2 Alinhadores'],['marca','Marca Eleição'],['braq','Braquetes'],['marcaBraq','Marca Braquetes'],['scanner','Scanner'],['satScanner','Satisfeito c/ Scanner'],['hibrido','Híbrido'],['convStep','Status Credenc.'],['obs','Obs']];
+  const cols=[['nome','Nome'],['exec','Executivo'],['clinica','Clínica'],['wpp','WhatsApp'],['origem','Origem'],['indicador','Indicado por'],['congresso','Congresso'],['status','Status'],['tentativas','Tentativas'],['dtContato','Dt 1º Contato'],['proxAcao','Próxima Ação'],['descProx','O que fazer'],['prior','Prioridade'],['potencial','Potencial'],['pacs','Pacs/mês'],['multi','Multidisciplinar'],['mais2','+2 Alinhadores'],['marca','Marca Eleição'],['braq','Braquetes'],['marcaBraq','Marca Braquetes'],['scanner','Scanner'],['satScanner','Satisfeito c/ Scanner'],['hibrido','Híbrido'],['convStep','Status Credenc.'],['obs','Obs']];
   const esc=v=>'"'+String(v||'').replace(/"/g,'""')+'"';
   const hdr=cols.map(([,l])=>esc(l)).join(';');
   const rows=data.map(d=>cols.map(([k])=>esc(d[k]||'')).join(';'));
