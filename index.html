@@ -291,7 +291,7 @@ const MARCAS_ALIGN=['Spark','Align','Angel','Clear','SouSmile','SureSmile'];
 const MARCAS=['Spark','Align','Angel','Clear','Braquete','Outro'];
 const BRAQ=['Sim – finalização','Sim – preço','Não'];
 const HIBRIDO=['Sim','Não','Talvez'];
-const CONV_NEGOC=['Credenciado voucher 100%','Credenciado voucher 50%','Credenciado voucher 30%','Credenciado sem voucher','Credenciamento Agendado'];
+const CONV_NEGOC=['Credenciado voucher 100%','Credenciado voucher 50%','Credenciado voucher 30%','Credenciado sem voucher','Credenciamento Agendado','Recertificação'];
 const CONV=['Credenciado voucher 100%','Credenciado voucher 50%','Credenciado voucher 30%','Credenciado sem voucher','Credenciamento Agendado','Credenciamento Realizado'];
 const GATILHOS=['Clínico','Preço','Marca','Atendimento'];
 const STATUS=['Em Abordagem','Visita Agendada','Em Negociação','Credenciado','Repescagem'];
@@ -474,8 +474,8 @@ function buildForm(d){
     </div>`:''}
     ${showConv?`
     <div class="sdiv" style="color:#14532D;border-color:#86EFAC">Etapas de credenciamento</div>
-    ${(s==='Em Negociação'?CONV_NEGOC:['Credenciamento Realizado','Recertificação']).map((st,i)=>{
-      const allConv=s==='Em Negociação'?CONV_NEGOC:['Credenciamento Realizado','Recertificação'];
+    ${(s==='Em Negociação'?CONV_NEGOC:['Credenciamento Realizado']).map((st,i)=>{
+      const allConv=s==='Em Negociação'?CONV_NEGOC:['Credenciamento Realizado'];
       const ci=allConv.indexOf(d.convStep||'');
       const ctx2=s==='Em Negociação'?'negoc':'cred';
       return '<div class="conv-step'+(i===ci?' current':'')+'" data-idx="'+i+'" data-ctx="'+ctx2+'" onclick="pickConvStep(this)">'
@@ -542,7 +542,7 @@ function checkIndicacao(){
 function pickConvStep(el){
   const idx=parseInt(el.getAttribute('data-idx'));
   const ctx=el.getAttribute('data-ctx');
-  const arr=ctx==='negoc'?CONV_NEGOC:['Credenciamento Realizado','Recertificação'];
+  const arr=ctx==='negoc'?CONV_NEGOC:['Credenciamento Realizado'];
   const fi=document.getElementById('f-conv');
   if(fi)fi.value=arr[idx];
   document.querySelectorAll('.conv-step').forEach((e,i)=>{
