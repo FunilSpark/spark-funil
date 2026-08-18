@@ -286,7 +286,7 @@ const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 const HDR={'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation'};
 
 const EXECS=['Guilherme Batochio','Bruno Scodino','William Galdino','Marcelo Giusti','Regiane Pagotto','Fabiano Nunes','Cirlene Fortuna','Pedro Nascimento','Adriana Lemos','Erica Lacerda','Celso Melgaço','Ana Carolina Barbeiro','Beatriz Miyake','Gisele de Oliveira','João Menezes','Leonardo Nunes'];
-const ORIGENS=['Leads Concorrência','Outras','Leads Congressos','Drs inativos Spark','Drs inativos Daimon','Indicação'];
+const ORIGENS=['Leads Concorrência','Outras','Leads Congressos','Drs inativos Spark','Drs inativos Daimon','Indicação','Parceria','Lead Marketing'];
 const MARCAS_ALIGN=['Spark','Align','Angel','Clear','SouSmile','SureSmile'];
 const MARCAS=['Spark','Align','Angel','Clear','Braquete','Outro'];
 const BRAQ=['Sim – finalização','Sim – preço','Não'];
@@ -303,7 +303,7 @@ let data=[],editId=null,pollInterval=null;
 function setSS(s){const d=document.getElementById('sdot'),l=document.getElementById('slbl');if(s==='ok'){d.className='sync-dot';l.textContent='Ao vivo';}else if(s==='sync'){d.className='sync-dot syncing';l.textContent='Sincronizando...';}else{d.className='sync-dot error';l.textContent='Erro de conexão';}}
 
 async function sbGet(){
-  const cols='id,nome,executivo,origem,indicador,congresso,outras_origem,cidade,estado,bairro,clinica,wpp,status_funil,tentativas,dt_contato,prox_acao,desc_prox,pacs,multi,marcas_align,braq,marca_braq,scanner,sat_scanner,hibrido,conv_step,dt_cred,tipo_cred,dt_cred_real,obs,prior,potencial,created_at';
+  const cols='id,nome,executivo,origem,indicador,congresso,outras_origem,parceria,cidade,estado,bairro,clinica,wpp,status_funil,tentativas,dt_contato,prox_acao,desc_prox,pacs,multi,marcas_align,braq,marca_braq,scanner,sat_scanner,hibrido,conv_step,dt_cred,tipo_cred,dt_cred_real,obs,prior,potencial,created_at';
   const r=await fetch(SB_URL+'/rest/v1/prospeccoes?select='+cols+'&order=created_at.desc',{headers:HDR});
   if(!r.ok)throw new Error(await r.text());
   return r.json();
@@ -312,8 +312,8 @@ async function sbInsert(rec){const r=await fetch(SB_URL+'/rest/v1/prospeccoes',{
 async function sbUpdate(id,rec){const r=await fetch(SB_URL+'/rest/v1/prospeccoes?id=eq.'+id,{method:'PATCH',headers:HDR,body:JSON.stringify(toDb(rec))});if(!r.ok)throw new Error(await r.text());return r.json();}
 async function sbDelete(id){const r=await fetch(SB_URL+'/rest/v1/prospeccoes?id=eq.'+id,{method:'DELETE',headers:HDR});if(!r.ok)throw new Error(await r.text());}
 
-function toDb(d){return{id:d.id,nome:d.nome,executivo:d.exec,origem:d.origem,indicador:d.indicador||null,congresso:d.congresso||null,outras_origem:d.outrasOrigem||null,cidade:d.cidade||null,estado:d.estado||null,bairro:d.bairro||null,clinica:d.clinica,wpp:d.wpp,status_funil:d.status,tentativas:d.tentativas,dt_contato:d.dtContato||null,prox_acao:d.proxAcao||null,desc_prox:d.descProx||null,pacs:d.pacs||null,multi:d.multi||null,marcas_align:d.marcasAlign||null,braq:d.braq||null,marca_braq:d.marcaBraq||null,scanner:d.scanner||null,sat_scanner:d.satScanner||null,hibrido:d.hibrido||null,conv_step:d.convStep||null,dt_cred:d.dtCred||null,tipo_cred:d.tipoCred||null,dt_cred_real:d.dtCredReal||null,obs:d.obs||null,prior:d.prior||null,potencial:d.potencial||null,gatilhos:d.gatilhos||null,ob_init:d.obInit||null,dt_ob:d.dtOb||null,dt_1caso:d.dt1Caso||null};}
-function fromDb(r){return{id:r.id,nome:r.nome,exec:r.executivo,origem:r.origem,indicador:r.indicador,congresso:r.congresso,outrasOrigem:r.outras_origem,cidade:r.cidade,estado:r.estado,bairro:r.bairro,clinica:r.clinica,wpp:r.wpp,status:r.status_funil,tentativas:r.tentativas,dtContato:r.dt_contato,proxAcao:r.prox_acao,descProx:r.desc_prox,pacs:r.pacs,multi:r.multi,marcasAlign:r.marcas_align,braq:r.braq,marcaBraq:r.marca_braq,scanner:r.scanner,satScanner:r.sat_scanner,hibrido:r.hibrido,convStep:r.conv_step,dtCred:r.dt_cred,tipoCred:r.tipo_cred,dtCredReal:r.dt_cred_real,obs:r.obs,prior:r.prior,potencial:r.potencial,gatilhos:r.gatilhos,obInit:r.ob_init,dtOb:r.dt_ob,dt1Caso:r.dt_1caso};}
+function toDb(d){return{id:d.id,nome:d.nome,executivo:d.exec,origem:d.origem,indicador:d.indicador||null,congresso:d.congresso||null,outras_origem:d.outrasOrigem||null,parceria:d.parceria||null,cidade:d.cidade||null,estado:d.estado||null,bairro:d.bairro||null,clinica:d.clinica,wpp:d.wpp,status_funil:d.status,tentativas:d.tentativas,dt_contato:d.dtContato||null,prox_acao:d.proxAcao||null,desc_prox:d.descProx||null,pacs:d.pacs||null,multi:d.multi||null,marcas_align:d.marcasAlign||null,braq:d.braq||null,marca_braq:d.marcaBraq||null,scanner:d.scanner||null,sat_scanner:d.satScanner||null,hibrido:d.hibrido||null,conv_step:d.convStep||null,dt_cred:d.dtCred||null,tipo_cred:d.tipoCred||null,dt_cred_real:d.dtCredReal||null,obs:d.obs||null,prior:d.prior||null,potencial:d.potencial||null,gatilhos:d.gatilhos||null,ob_init:d.obInit||null,dt_ob:d.dtOb||null,dt_1caso:d.dt1Caso||null};}
+function fromDb(r){return{id:r.id,nome:r.nome,exec:r.executivo,origem:r.origem,indicador:r.indicador,congresso:r.congresso,outrasOrigem:r.outras_origem,parceria:r.parceria,cidade:r.cidade,estado:r.estado,bairro:r.bairro,clinica:r.clinica,wpp:r.wpp,status:r.status_funil,tentativas:r.tentativas,dtContato:r.dt_contato,proxAcao:r.prox_acao,descProx:r.desc_prox,pacs:r.pacs,multi:r.multi,marcasAlign:r.marcas_align,braq:r.braq,marcaBraq:r.marca_braq,scanner:r.scanner,satScanner:r.sat_scanner,hibrido:r.hibrido,convStep:r.conv_step,dtCred:r.dt_cred,tipoCred:r.tipo_cred,dtCredReal:r.dt_cred_real,obs:r.obs,prior:r.prior,potencial:r.potencial,gatilhos:r.gatilhos,obInit:r.ob_init,dtOb:r.dt_ob,dt1Caso:r.dt_1caso};}
 
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function v(id){const el=document.getElementById(id);return el?el.value:'';}
@@ -435,6 +435,7 @@ function buildForm(d){
       ${d.origem==='Indicação'?'<div class="fg full" id="indicador-field"><label>Qual Dr(a). indicou?</label><input id="f-indicador" value="'+(d.indicador||'')+'" placeholder="Dr. João Silva"></div>':'<div class="fg" id="indicador-field" style="display:none"><label>Qual Dr(a). indicou?</label><input id="f-indicador" value="'+(d.indicador||'')+'" placeholder="Dr. João Silva"></div>'}
       ${d.origem==='Leads Congressos'?'<div class="fg full" id="congresso-field"><label>Qual Congresso?</label><input id="f-congresso" value="'+(d.congresso||'')+'" placeholder="Ex: SBO 2026, CIOSP..."></div>':'<div class="fg" id="congresso-field" style="display:none"><label>Qual Congresso?</label><input id="f-congresso" value="'+(d.congresso||'')+'" placeholder="Ex: SBO 2026, CIOSP..."></div>'}
       ${d.origem==='Outras'?'<div class="fg full" id="outras-field"><label>Qual outra origem?</label><input id="f-outras" value="'+(d.outrasOrigem||'')+'" placeholder="Descreva a origem"></div>':'<div class="fg" id="outras-field" style="display:none"><label>Qual outra origem?</label><input id="f-outras" value="'+(d.outrasOrigem||'')+'" placeholder="Descreva a origem"></div>'}
+      ${d.origem==='Parceria'?'<div class="fg full" id="parceria-field"><label>Qual parceria?</label><input id="f-parceria" value="'+(d.parceria||'')+'" placeholder="Ex: APCD, Instituto..."></div>':'<div class="fg" id="parceria-field" style="display:none"><label>Qual parceria?</label><input id="f-parceria" value="'+(d.parceria||'')+'" placeholder="Ex: APCD, Instituto..."></div>'}
       <div class="fg"><label>Clínica</label><input id="f-clinica" value="${d.clinica||''}" placeholder="Clínica Sorriso"></div>
       <div class="fg"><label>WhatsApp</label><input id="f-wpp" value="${d.wpp||''}" placeholder="(11) 99999-0000"></div>
       <div class="fg"><label>Cidade</label><input id="f-cidade" value="${d.cidade||''}" placeholder="São Paulo"></div>
@@ -538,6 +539,8 @@ function checkIndicacao(){
   if(cField){cField.style.display=sel&&sel.value==='Leads Congressos'?'flex':'none';}
   const oField=document.getElementById('outras-field');
   if(oField){oField.style.display=sel&&sel.value==='Outras'?'flex':'none';}
+  const pField=document.getElementById('parceria-field');
+  if(pField){pField.style.display=sel&&sel.value==='Parceria'?'flex':'none';}
 }
 function pickConvStep(el){
   const idx=parseInt(el.getAttribute('data-idx'));
@@ -561,7 +564,7 @@ function setConvStep(i,arr){
 }
 function collectForm(){
   return{
-    nome:v('f-nome'),exec:v('fm-exec'),origem:v('f-orig'),indicador:v('f-indicador'),congresso:v('f-congresso'),outrasOrigem:v('f-outras'),cidade:v('f-cidade'),estado:v('f-estado'),bairro:v('f-bairro'),
+    nome:v('f-nome'),exec:v('fm-exec'),origem:v('f-orig'),indicador:v('f-indicador'),congresso:v('f-congresso'),outrasOrigem:v('f-outras'),parceria:v('f-parceria'),cidade:v('f-cidade'),estado:v('f-estado'),bairro:v('f-bairro'),
     clinica:v('f-clinica'),wpp:v('f-wpp'),status:v('f-status'),tentativas:v('f-tries'),
     dtContato:v('f-dtc'),proxAcao:v('f-prox'),descProx:v('f-descprox'),
     pacs:v('f-pacs'),multi:v('f-multi'),
@@ -667,7 +670,7 @@ function copyMsg(id){
 
 function exportCSV(){
   if(!data.length){alert('Sem dados');return;}
-  const cols=[['nome','Nome'],['exec','Executivo'],['clinica','Clínica'],['wpp','WhatsApp'],['origem','Origem'],['indicador','Indicado por'],['congresso','Congresso'],['outrasOrigem','Outras (qual)'],['cidade','Cidade'],['estado','Estado'],['bairro','Bairro'],['status','Status'],['tentativas','Tentativas'],['dtContato','Dt 1º Contato'],['proxAcao','Próxima Ação'],['descProx','O que fazer'],['prior','Prioridade'],['potencial','Potencial'],['pacs','Pacs/mês'],['multi','Multidisciplinar'],['mais2','+2 Alinhadores'],['marca','Marca Eleição'],['braq','Braquetes'],['marcaBraq','Marca Braquetes'],['scanner','Scanner'],['satScanner','Satisfeito c/ Scanner'],['hibrido','Híbrido'],['convStep','Status Credenc.'],['obs','Obs']];
+  const cols=[['nome','Nome'],['exec','Executivo'],['clinica','Clínica'],['wpp','WhatsApp'],['origem','Origem'],['indicador','Indicado por'],['congresso','Congresso'],['outrasOrigem','Outras (qual)'],['parceria','Parceria'],['cidade','Cidade'],['estado','Estado'],['bairro','Bairro'],['status','Status'],['tentativas','Tentativas'],['dtContato','Dt 1º Contato'],['proxAcao','Próxima Ação'],['descProx','O que fazer'],['prior','Prioridade'],['potencial','Potencial'],['pacs','Pacs/mês'],['multi','Multidisciplinar'],['mais2','+2 Alinhadores'],['marca','Marca Eleição'],['braq','Braquetes'],['marcaBraq','Marca Braquetes'],['scanner','Scanner'],['satScanner','Satisfeito c/ Scanner'],['hibrido','Híbrido'],['convStep','Status Credenc.'],['obs','Obs']];
   const esc=v=>'"'+String(v||'').replace(/"/g,'""')+'"';
   const hdr=cols.map(([,l])=>esc(l)).join(';');
   const rows=data.map(d=>cols.map(([k])=>esc(d[k]||'')).join(';'));
