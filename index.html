@@ -454,8 +454,8 @@ function buildForm(d){
     <input type="hidden" id="f-tries" value="${d.tentativas||'1ª tentativa'}">
     <div class="form-grid" style="margin-top:10px">
       <div class="fg"><label>Data 1º contato</label><input type="date" id="f-dtc" value="${d.dtContato||''}"></div>
-      <div class="fg"><label>Data 2º contato</label><input type="date" id="f-dtc2" value="${d.dt2Contato||''}"></div>
-      <div class="fg"><label>Data 3º contato</label><input type="date" id="f-dtc3" value="${d.dt3Contato||''}"></div>
+      <div class="fg" id="dtc2-field" style="display:${(d.tentativas==='2ª tentativa'||d.tentativas==='3ª tentativa')?'flex':'none'}"><label>Data 2º contato</label><input type="date" id="f-dtc2" value="${d.dt2Contato||''}"></div>
+      <div class="fg" id="dtc3-field" style="display:${d.tentativas==='3ª tentativa'?'flex':'none'}"><label>Data 3º contato</label><input type="date" id="f-dtc3" value="${d.dt3Contato||''}"></div>
       <div class="fg"><label>Próxima ação — data</label><input type="date" id="f-prox" value="${d.proxAcao||''}"></div>
       <div class="fg full"><label>O que fazer</label><input id="f-descprox" value="${d.descProx||''}" placeholder="Ex: Ligar para confirmar visita"></div>
     </div>
@@ -516,7 +516,15 @@ function buildForm(d){
 }
 
 function changeStatus(s){const cur=collectForm();cur.status=s;buildForm(cur);}
-function setTry(t,el){document.querySelectorAll('.try').forEach(b=>b.classList.remove('active'));el.classList.add('active');const fi=document.getElementById('f-tries');if(fi)fi.value=t;}
+function setTry(t,el){
+  document.querySelectorAll('.try').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  const fi=document.getElementById('f-tries');if(fi)fi.value=t;
+  const f2=document.getElementById('dtc2-field');
+  const f3=document.getElementById('dtc3-field');
+  if(f2)f2.style.display=(t==='2ª tentativa'||t==='3ª tentativa')?'flex':'none';
+  if(f3)f3.style.display=(t==='3ª tentativa')?'flex':'none';
+}
 
 
 function updateGatilhos(){
