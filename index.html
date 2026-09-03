@@ -303,7 +303,7 @@ let data=[],editId=null,pollInterval=null;
 function setSS(s){const d=document.getElementById('sdot'),l=document.getElementById('slbl');if(s==='ok'){d.className='sync-dot';l.textContent='Ao vivo';}else if(s==='sync'){d.className='sync-dot syncing';l.textContent='Sincronizando...';}else{d.className='sync-dot error';l.textContent='Erro de conexão';}}
 
 async function sbGet(){
-  const cols='id,nome,executivo,origem,indicador,congresso,outras_origem,parceria,cidade,estado,bairro,clinica,wpp,status_funil,tentativas,dt_contato,prox_acao,desc_prox,pacs,multi,marcas_align,braq,marca_braq,scanner,sat_scanner,hibrido,conv_step,dt_cred,tipo_cred,dt_cred_real,obs,prior,potencial,created_at';
+  const cols='id,nome,executivo,origem,indicador,congresso,outras_origem,parceria,cidade,estado,bairro,clinica,wpp,status_funil,tentativas,dt_contato,dt2_contato,dt3_contato,prox_acao,desc_prox,pacs,multi,marcas_align,braq,marca_braq,scanner,sat_scanner,hibrido,conv_step,dt_cred,tipo_cred,dt_cred_real,obs,prior,potencial,created_at';
   const r=await fetch(SB_URL+'/rest/v1/prospeccoes?select='+cols+'&order=created_at.desc',{headers:HDR});
   if(!r.ok)throw new Error(await r.text());
   return r.json();
@@ -312,13 +312,19 @@ async function sbInsert(rec){const r=await fetch(SB_URL+'/rest/v1/prospeccoes',{
 async function sbUpdate(id,rec){const r=await fetch(SB_URL+'/rest/v1/prospeccoes?id=eq.'+id,{method:'PATCH',headers:HDR,body:JSON.stringify(toDb(rec))});if(!r.ok)throw new Error(await r.text());return r.json();}
 async function sbDelete(id){const r=await fetch(SB_URL+'/rest/v1/prospeccoes?id=eq.'+id,{method:'DELETE',headers:HDR});if(!r.ok)throw new Error(await r.text());}
 
-function toDb(d){return{id:d.id,nome:d.nome,executivo:d.exec,origem:d.origem,indicador:d.indicador||null,congresso:d.congresso||null,outras_origem:d.outrasOrigem||null,parceria:d.parceria||null,cidade:d.cidade||null,estado:d.estado||null,bairro:d.bairro||null,clinica:d.clinica,wpp:d.wpp,status_funil:d.status,tentativas:d.tentativas,dt_contato:d.dtContato||null,prox_acao:d.proxAcao||null,desc_prox:d.descProx||null,pacs:d.pacs||null,multi:d.multi||null,marcas_align:d.marcasAlign||null,braq:d.braq||null,marca_braq:d.marcaBraq||null,scanner:d.scanner||null,sat_scanner:d.satScanner||null,hibrido:d.hibrido||null,conv_step:d.convStep||null,dt_cred:d.dtCred||null,tipo_cred:d.tipoCred||null,dt_cred_real:d.dtCredReal||null,obs:d.obs||null,prior:d.prior||null,potencial:d.potencial||null,gatilhos:d.gatilhos||null,ob_init:d.obInit||null,dt_ob:d.dtOb||null,dt_1caso:d.dt1Caso||null};}
-function fromDb(r){return{id:r.id,nome:r.nome,exec:r.executivo,origem:r.origem,indicador:r.indicador,congresso:r.congresso,outrasOrigem:r.outras_origem,parceria:r.parceria,cidade:r.cidade,estado:r.estado,bairro:r.bairro,clinica:r.clinica,wpp:r.wpp,status:r.status_funil,tentativas:r.tentativas,dtContato:r.dt_contato,proxAcao:r.prox_acao,descProx:r.desc_prox,pacs:r.pacs,multi:r.multi,marcasAlign:r.marcas_align,braq:r.braq,marcaBraq:r.marca_braq,scanner:r.scanner,satScanner:r.sat_scanner,hibrido:r.hibrido,convStep:r.conv_step,dtCred:r.dt_cred,tipoCred:r.tipo_cred,dtCredReal:r.dt_cred_real,obs:r.obs,prior:r.prior,potencial:r.potencial,gatilhos:r.gatilhos,obInit:r.ob_init,dtOb:r.dt_ob,dt1Caso:r.dt_1caso};}
+function toDb(d){return{id:d.id,nome:d.nome,executivo:d.exec,origem:d.origem,indicador:d.indicador||null,congresso:d.congresso||null,outras_origem:d.outrasOrigem||null,parceria:d.parceria||null,cidade:d.cidade||null,estado:d.estado||null,bairro:d.bairro||null,clinica:d.clinica,wpp:d.wpp,status_funil:d.status,tentativas:d.tentativas,dt_contato:d.dtContato||null,dt2_contato:d.dt2Contato||null,dt3_contato:d.dt3Contato||null,prox_acao:d.proxAcao||null,desc_prox:d.descProx||null,pacs:d.pacs||null,multi:d.multi||null,marcas_align:d.marcasAlign||null,braq:d.braq||null,marca_braq:d.marcaBraq||null,scanner:d.scanner||null,sat_scanner:d.satScanner||null,hibrido:d.hibrido||null,conv_step:d.convStep||null,dt_cred:d.dtCred||null,tipo_cred:d.tipoCred||null,dt_cred_real:d.dtCredReal||null,obs:d.obs||null,prior:d.prior||null,potencial:d.potencial||null,gatilhos:d.gatilhos||null,ob_init:d.obInit||null,dt_ob:d.dtOb||null,dt_1caso:d.dt1Caso||null};}
+function fromDb(r){return{id:r.id,nome:r.nome,exec:r.executivo,origem:r.origem,indicador:r.indicador,congresso:r.congresso,outrasOrigem:r.outras_origem,parceria:r.parceria,cidade:r.cidade,estado:r.estado,bairro:r.bairro,clinica:r.clinica,wpp:r.wpp,status:r.status_funil,tentativas:r.tentativas,dtContato:r.dt_contato,dt2Contato:r.dt2_contato,dt3Contato:r.dt3_contato,proxAcao:r.prox_acao,descProx:r.desc_prox,pacs:r.pacs,multi:r.multi,marcasAlign:r.marcas_align,braq:r.braq,marcaBraq:r.marca_braq,scanner:r.scanner,satScanner:r.sat_scanner,hibrido:r.hibrido,convStep:r.conv_step,dtCred:r.dt_cred,tipoCred:r.tipo_cred,dtCredReal:r.dt_cred_real,obs:r.obs,prior:r.prior,potencial:r.potencial,gatilhos:r.gatilhos,obInit:r.ob_init,dtOb:r.dt_ob,dt1Caso:r.dt_1caso};}
 
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function v(id){const el=document.getElementById(id);return el?el.value:'';}
 function today(){return new Date().toISOString().slice(0,10);}
 function daysSince(ds){if(!ds)return null;return Math.floor((Date.now()-new Date(ds).getTime())/86400000);}
+function lastContactDate(d){
+  if(d.tentativas==='3ª tentativa'&&d.dt3Contato)return d.dt3Contato;
+  if(d.tentativas==='2ª tentativa'&&d.dt2Contato)return d.dt2Contato;
+  if(d.tentativas==='3ª tentativa'&&d.dt2Contato)return d.dt2Contato;
+  return d.dtContato;
+}
 
 async function loadData(silent=false){
   if(!silent)setSS('sync');
@@ -349,8 +355,8 @@ function renderDash(){
   const tot=data.length||1;
   const cvD=[{l:'Em Abordagem',c:'#D97706',n:data.filter(d=>d.status==='Em Abordagem').length},{l:'Visita Agendada',c:'#2563EB',n:data.filter(d=>d.status==='Visita Agendada').length},{l:'Em Negociação',c:'#EA580C',n:data.filter(d=>d.status==='Em Negociação').length},{l:'Credenciado',c:'#16A34A',n:data.filter(d=>d.status==='Credenciado').length}];
   document.getElementById('ch-conv').innerHTML=cvD.map(s=>`<div class="bar-row"><div class="bar-name">${s.l}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(s.n/tot*100)}%;background:${s.c}"></div></div><div class="bar-cnt">${s.n}</div></div>`).join('');
-  const par=data.filter(d=>{if(d.status==='Credenciado'||d.status==='Repescagem')return false;const ds=daysSince(d.dtContato);return ds!==null&&ds>=7;}).sort((a,b)=>(daysSince(b.dtContato)||0)-(daysSince(a.dtContato)||0));
-  document.getElementById('parados').innerHTML=par.length?par.map(d=>`<div class="parado-card" onclick="openEdit('${d.id}')"><div style="font-weight:600;font-size:13px">${d.nome} <span style="font-weight:400;color:#6B7280">· ${d.exec||''}</span></div><div style="font-size:11px;color:#EF4444;margin-top:2px">${daysSince(d.dtContato)} dias · <span class="pill ${PILL[d.status]}">${d.status}</span></div></div>`).join(''):'<div class="empty-msg">Nenhum doutor parado.</div>';
+  const par=data.filter(d=>{if(d.status==='Credenciado'||d.status==='Repescagem')return false;const ds=daysSince(lastContactDate(d));return ds!==null&&ds>=7;}).sort((a,b)=>(daysSince(lastContactDate(b))||0)-(daysSince(lastContactDate(a))||0));
+  document.getElementById('parados').innerHTML=par.length?par.map(d=>`<div class="parado-card" onclick="openEdit('${d.id}')"><div style="font-weight:600;font-size:13px">${d.nome} <span style="font-weight:400;color:#6B7280">· ${d.exec||''}</span></div><div style="font-size:11px;color:#EF4444;margin-top:2px">${daysSince(lastContactDate(d))} dias · <span class="pill ${PILL[d.status]}">${d.status}</span></div></div>`).join(''):'<div class="empty-msg">Nenhum doutor parado.</div>';
   const prx=data.filter(d=>d.proxAcao&&d.status!=='Credenciado'&&d.status!=='Repescagem').sort((a,b)=>a.proxAcao.localeCompare(b.proxAcao)).slice(0,6);
   document.getElementById('prox').innerHTML=prx.length?prx.map(d=>`<div class="prox-card" onclick="openEdit('${d.id}')"><div style="font-weight:600;font-size:13px">${d.nome} <span style="font-weight:400;color:#9CA3AF">· ${d.exec||''}</span></div><div style="font-size:11px;color:#6B7280;display:flex;justify-content:space-between;margin-top:2px"><span>${d.descProx||'Ação pendente'}</span><span>${d.proxAcao}</span></div></div>`).join(''):'<div class="empty-msg">Nenhuma ação agendada.</div>';
 }
@@ -359,7 +365,7 @@ function renderFunil(){
   document.getElementById('kanban').innerHTML=STATUS.map(st=>{
     const items=data.filter(d=>d.status===st),col=KAN[st];
     const cards=items.length?items.map(d=>{
-      const dias=daysSince(d.dtContato);
+      const dias=daysSince(lastContactDate(d));
       const venc=d.proxAcao&&d.proxAcao<today();
       const skip=d.status==='Credenciado'||d.status==='Repescagem';
       let icon='';
@@ -397,7 +403,7 @@ function renderLista(){
     if(fE&&d.exec!==fE)return false;
     if(fS&&d.status!==fS)return false;
     return true;
-  }).sort((a,b)=>(b.dtContato||'').localeCompare(a.dtContato||''));
+  }).sort((a,b)=>(lastContactDate(b)||'').localeCompare(lastContactDate(a)||''));
   const body=document.getElementById('lista-body');
   if(!filtered.length){body.innerHTML='<div class="list-empty">Nenhum resultado</div>';return;}
   body.innerHTML=filtered.map(d=>`<div class="list-row" onclick="openEdit('${d.id}')"><div><div class="list-name">${d.prior?'<span style="margin-right:3px">'+d.prior.split(' ')[0]+'</span>':''}${d.nome}</div><div class="list-clinic">${d.clinica||''}</div></div><div style="font-size:12px">${d.exec||'–'}</div><div><span class="pill ${PILL[d.status]||'p-repesc'}">${d.status||'–'}</span></div><div style="font-size:12px;color:#6B7280">${d.tentativas||'–'}</div><div style="font-size:11px;color:#6B7280">${d.proxAcao||'–'}</div><div style="color:#D1D5DB"><i class="ti ti-chevron-right"></i></div></div>`).join('');
@@ -448,6 +454,8 @@ function buildForm(d){
     <input type="hidden" id="f-tries" value="${d.tentativas||'1ª tentativa'}">
     <div class="form-grid" style="margin-top:10px">
       <div class="fg"><label>Data 1º contato</label><input type="date" id="f-dtc" value="${d.dtContato||''}"></div>
+      <div class="fg"><label>Data 2º contato</label><input type="date" id="f-dtc2" value="${d.dt2Contato||''}"></div>
+      <div class="fg"><label>Data 3º contato</label><input type="date" id="f-dtc3" value="${d.dt3Contato||''}"></div>
       <div class="fg"><label>Próxima ação — data</label><input type="date" id="f-prox" value="${d.proxAcao||''}"></div>
       <div class="fg full"><label>O que fazer</label><input id="f-descprox" value="${d.descProx||''}" placeholder="Ex: Ligar para confirmar visita"></div>
     </div>
@@ -566,7 +574,7 @@ function collectForm(){
   return{
     nome:v('f-nome'),exec:v('fm-exec'),origem:v('f-orig'),indicador:v('f-indicador'),congresso:v('f-congresso'),outrasOrigem:v('f-outras'),parceria:v('f-parceria'),cidade:v('f-cidade'),estado:v('f-estado'),bairro:v('f-bairro'),
     clinica:v('f-clinica'),wpp:v('f-wpp'),status:v('f-status'),tentativas:v('f-tries'),
-    dtContato:v('f-dtc'),proxAcao:v('f-prox'),descProx:v('f-descprox'),
+    dtContato:v('f-dtc'),dt2Contato:v('f-dtc2'),dt3Contato:v('f-dtc3'),proxAcao:v('f-prox'),descProx:v('f-descprox'),
     pacs:v('f-pacs'),multi:v('f-multi'),
     marcasAlign:v('f-marcas-align'),
     braq:v('f-braq'),marcaBraq:v('f-marcabraq'),
@@ -670,7 +678,7 @@ function copyMsg(id){
 
 function exportCSV(){
   if(!data.length){alert('Sem dados');return;}
-  const cols=[['nome','Nome'],['exec','Executivo'],['clinica','Clínica'],['wpp','WhatsApp'],['origem','Origem'],['indicador','Indicado por'],['congresso','Congresso'],['outrasOrigem','Outras (qual)'],['parceria','Parceria'],['cidade','Cidade'],['estado','Estado'],['bairro','Bairro'],['status','Status'],['tentativas','Tentativas'],['dtContato','Dt 1º Contato'],['proxAcao','Próxima Ação'],['descProx','O que fazer'],['prior','Prioridade'],['potencial','Potencial'],['pacs','Pacs/mês'],['multi','Multidisciplinar'],['mais2','+2 Alinhadores'],['marca','Marca Eleição'],['braq','Braquetes'],['marcaBraq','Marca Braquetes'],['scanner','Scanner'],['satScanner','Satisfeito c/ Scanner'],['hibrido','Híbrido'],['convStep','Status Credenc.'],['obs','Obs']];
+  const cols=[['nome','Nome'],['exec','Executivo'],['clinica','Clínica'],['wpp','WhatsApp'],['origem','Origem'],['indicador','Indicado por'],['congresso','Congresso'],['outrasOrigem','Outras (qual)'],['parceria','Parceria'],['cidade','Cidade'],['estado','Estado'],['bairro','Bairro'],['status','Status'],['tentativas','Tentativas'],['dtContato','Dt 1º Contato'],['dt2Contato','Dt 2º Contato'],['dt3Contato','Dt 3º Contato'],['proxAcao','Próxima Ação'],['descProx','O que fazer'],['prior','Prioridade'],['potencial','Potencial'],['pacs','Pacs/mês'],['multi','Multidisciplinar'],['mais2','+2 Alinhadores'],['marca','Marca Eleição'],['braq','Braquetes'],['marcaBraq','Marca Braquetes'],['scanner','Scanner'],['satScanner','Satisfeito c/ Scanner'],['hibrido','Híbrido'],['convStep','Status Credenc.'],['obs','Obs']];
   const esc=v=>'"'+String(v||'').replace(/"/g,'""')+'"';
   const hdr=cols.map(([,l])=>esc(l)).join(';');
   const rows=data.map(d=>cols.map(([k])=>esc(d[k]||'')).join(';'));
